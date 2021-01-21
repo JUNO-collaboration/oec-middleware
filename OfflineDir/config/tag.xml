@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<labelList>
+    <label>
+        <name>singles_LE</name>
+        <tag>0x10200001</tag>
+    </label>
+    <label>
+        <name>singles_ME</name>
+        <tag>0x10200002</tag>
+    </label>
+    <label>
+        <name>singles_HE</name>
+        <tag>0x10200004</tag>
+    </label>
+    <label>
+        <name>singles_XE</name>
+        <tag>0x10200008</tag>
+    </label>
+    <label>
+        <name>muWP</name>
+        <tag>0x20100000</tag>
+    </label>
+    <label>
+        <name>muTT</name>
+        <tag>0x40100000</tag>
+    </label>
+    <label>
+        <name>muStop</name>
+        <tag>0x10104000</tag>
+    </label>
+    <label>
+        <name>muShower</name>
+        <tag>0x10103000</tag>
+    </label>
+    <label>
+        <name>muSglTrack</name>
+        <tag>0x10100100</tag>
+    </label>
+    <label>
+        <name>muDblTrack</name>
+        <tag>0x10100200</tag>
+    </label>
+    <label>
+        <name>muMultiTrack</name>
+        <tag>0x10100300</tag>
+    </label>
+
+    <!--##########for correlated event tag############-->
+    <label>
+        <name>IBD</name>
+        <tag>0x10200400</tag>
+    </label>
+
+    <label>
+        <name>BiPo</name>
+        <tag>0x10200200</tag>
+    </label>
+
+    <label>
+        <name>ProtonDecay</name>
+        <tag>0x10200100</tag>
+    </label>
+
+    <label>
+        <name>SpallationNeutron</name>
+        <tag>0x10400010</tag>
+    </label>
+    <label>
+        <name>SpallationIsotope</name>
+        <tag>0x10400020</tag>
+    </label>
+    <label>
+        <name>michelElec</name>
+        <tag>0x10400040</tag>
+    </label>
+</labelList>
