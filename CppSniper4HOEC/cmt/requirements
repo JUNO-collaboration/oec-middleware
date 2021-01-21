@@ -1,0 +1,12 @@
+package CppSniper4HOEC
+
+use SniperKernel   v*
+use EvtNavigator   v* DataModel
+use OECEvent       v*
+use OECAdaptor     v*
+use Boost          v* Externals
+
+apply_pattern install_more_includes more="CppSniper"
+
+library CppSniper4HOEC *.cc
+apply_pattern linker_library library=CppSniper4HOEC

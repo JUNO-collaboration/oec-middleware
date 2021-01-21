@@ -1,0 +1,9 @@
+package OECAdaptor
+
+use SniperKernel   v*
+
+macro OECAdaptor_home "${JUNO_OECLIB_OECAdaptor_HOME}"
+macro OECAdaptor_linkopts "-L$(OECAdaptor_home)/installed/lib -loec_com"
+
+include_path none
+include_dirs $(OECAdaptor_home)/user/processor

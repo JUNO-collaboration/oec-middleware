@@ -1,0 +1,12 @@
+package OECTestAlg
+
+use SniperKernel   v*
+use EvtNavigator   v*  DataModel
+use ElecEvent      v*  DataModel
+use CalibEvent     v*  DataModel
+use DumpTreeAlg    v*
+use CppSniper4LOEC v*
+use CppSniper4HOEC v*
+
+library OECTestAlg *.cc
+apply_pattern install_python_modules

@@ -1,0 +1,12 @@
+package DumpTreeAlg
+
+use SniperKernel  v*
+use RootWriter    v*  SniperSvc
+use EvtNavigator  v*  DataModel
+use ElecEvent     v*  DataModel
+use CalibEvent    v*  DataModel
+use Identifier    v*  Detector
+
+library DumpTreeAlg *.cc
+apply_pattern linker_library library=DumpTreeAlg
+apply_pattern install_python_modules
