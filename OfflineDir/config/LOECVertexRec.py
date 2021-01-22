@@ -36,7 +36,7 @@ def GetTask():
     #for fast reconstruction
     import Geometry
     geosvc=task.createSvc("RecGeomSvc")
-    geosvc.property("GeomFile").set(offlineDir + "/data/JunoGeom.root")
+    geosvc.property("GeomFile").set(offlineDir + "/data/sample_detsim.root")
     geosvc.property("GeomPathInRoot").set("JunoGeom")
     geosvc.property("FastInit").set(True)
     import JunoTimer

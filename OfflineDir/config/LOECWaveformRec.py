@@ -6,7 +6,7 @@ def GetTask():
 
     import Sniper
     Sniper.setLogLevel(5)
-    task = Sniper.Task("WfTask")
+    task = Sniper.TopTask("WfTask")
     task.setEvtMax(-1)
 
     Sniper.loadDll("libCppSniper4LOEC.so")
@@ -44,6 +44,47 @@ def GetTask():
 
     ## custom settings
     #isvc.setLogLevel(2)
+
+
+
+
+###################Vertex Rec alg and Svc##################
+    import OECTagSvc
+    lectagsvc = task.createSvc("OECTagSvc")
+    lectagsvc.property("OECTagFile").set(offlineDir + "/config/tag.xml")
+    import EvtConfig
+    evtconfig = task.createSvc("EvtConfigSvc")
+    evtconfig.property("seqListFile").set(offlineDir + "/config/seq.xml")
+    evtconfig.property("sigListFile").set(offlineDir + "/config/LOEC_sig.xml")
+
+    #store energy and time for tag
+    import EvtStore
+    task.property("svcs").append("EvtStoreSvc")
+
+    #store result
+    import EvtResult
+    task.property("svcs").append("EvtResultSvc")
+
+    #for fast reconstruction
+    geosvc=task.createSvc("RecGeomSvc")
+    geosvc.property("GeomFile").set(offlineDir + "/data/sample_detsim.root")
+    geosvc.property("GeomPathInRoot").set("JunoGeom")
+    geosvc.property("FastInit").set(True)
+    import JunoTimer
+    task.createSvc("JunoTimerSvc")
+
+    import EvtAlgorithms
+    import EvtSteering
+    import SimpleRecAlg
+    import RecCdMuonAlg
+    import SpmtMuonRecTool
+
+    #subTask RecCdMuonAlg
+    subTask_RecMuon = task.createTask("Task/subTask_RecCdMuonAlg")
+    recMuonAlg = RecCdMuonAlg.createAlg(subTask_RecMuon)
+    recMuonAlg.property("Use3inchPMT").set(True)
+    recMuonAlg.useRecTool("SpmtMuonRecTool")
+    task.property("algs").append("StepHandler")
 
     return task
 

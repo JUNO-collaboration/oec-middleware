@@ -1,6 +1,5 @@
 #include "LOECNavBuf.h"
 #include "LOECInputSvc.h"
-//#include "OEC_com/oec_com/OEC_define.h"
 #include "Event/ElecHeader.h"
 #include "Event/CalibHeader.h"
 #include "EvtNavigator/EvtNavigator.h"
@@ -21,15 +20,7 @@ LOECInputSvc::~LOECInputSvc()
 
 bool LOECInputSvc::initialize()
 {
-    if ( m_type == "Waveform" ) {
-        this->m_get = &LOECInputSvc::getWaveform;
-    }
-    else if ( m_type == "QT" ) {
-        this->m_get = &LOECInputSvc::getQT;
-    }
-    else {
-        return false;
-    }
+    
 
     SniperDataPtr<LOECNavBuf> buf(getParent(), "/Event");
     if ( buf.invalid() ) {
@@ -50,9 +41,8 @@ bool LOECInputSvc::finalize()
 }
 
 bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
-{
-    uint32_t* addr = (uint32_t*)wfEvt.ptr;
-
+{   
+    std::cout<<"Start get waveform "<<std::endl;
     JM::EvtNavigator* nav = new JM::EvtNavigator();
     m_buf->set(nav);
 
@@ -62,9 +52,13 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
     JM::ElecEvent* event = new JM::ElecEvent();
     header->setEvent(event);
 
+    //event->setElecFeeCrate(JM::ElecFeeCrate());
     auto& chMap = const_cast<std::map<int,JM::ElecFeeChannel>&>(event->elecFeeCrate().channelData());
 
-    //unsigned int size = wfEvt.buffer_size;
+    //convert DAQ Buffer to ElecEvent
+    uint32_t* addr = (uint32_t*)wfEvt.ptr;
+
+    //unsigned int size = wfEvt->size();
     //std::cout << "size: " << size << std::endl;
     //std::cout << std::hex;
     //for ( int i = 0; i < size/4; ++i ) {
@@ -75,12 +69,11 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
     //}
     //std::cout << std::dec << std::endl;
 
-    //if ( addr[0] != 0xee1234ee || addr[6] != STREAM_TAG_WAVE ) {
-    //    LogFatal << "Wrong event marker: " << *addr << std::endl;
-    //    return false;
-    //}
+    if ( addr[0] != 0xee1234ee || addr[6] != 0x10002/*STREAM_TAG_WAVE*/ ) {
+        LogFatal << "Wrong event marker: " << *addr << std::endl;
+        return false;
+    }
 
-    //convert DAQ Buffer to ElecEvent
     m_buf->l1id = addr[4];
     int headerSize = addr[1]/4;  //in words
     int totalSize = addr[3]/4;   //in words
@@ -88,10 +81,6 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
     nav->setTimeStamp(TTimeStamp(addr[8], addr[7]));
     const_cast<JM::ElecFeeCrate&>(event->elecFeeCrate()).setTriggerTime(TimeStamp(addr[8], addr[7]));
     header->setEventID(addr[5]);
-
-    LogInfo << " L1ID: " << m_buf->l1id
-        << " EventID: " << header->EventID()
-        << " time: " << nav->TimeStamp() << std::endl;
 
     static const int wfSize = 4 + 945;  //(header + data) in words
     static const int wfSizeReal = 1250; //in 16 bits short integers
@@ -113,90 +102,9 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
             adc.push_back(value);
         }
         idx += wfSize;
-        //std::cout << "PMTID: " << pmtId << "  idx: " << idx << "  size: "<< adc.size() << std::endl;
     }
-
+    std::cout<<"get waveform end"<<std::endl;
     return true;
 }
 
-bool LOECInputSvc::getQT(oec::simpleBuffer& qtEvt)
-{
-    uint32_t* addr = (uint32_t*)qtEvt.ptr;
 
-    JM::EvtNavigator* nav = new JM::EvtNavigator();
-    m_buf->set(nav);
-
-    JM::CalibHeader* header = new JM::CalibHeader();
-    nav->addHeader(header);
-
-    JM::CalibEvent* event = new JM::CalibEvent();
-    header->setEvent(event);
-
-    //unsigned int size = qtEvt.buffer_size;
-    //std::cout << "size: " << size << std::endl;
-    //std::cout << std::hex;
-    //for ( int i = 0; i < size/4; ++i ) {
-    //    if ( i%8 == 0 ) {
-    //        std::cout << std::endl;
-    //    }
-    //    std::cout << " 0x" << addr[i];
-    //}
-    //std::cout << std::dec << std::endl;
-
-    //if ( addr[0] != 0xee1234ee || addr[6] != STREAM_TAG_WAVE_TQ ) {
-    //    LogFatal << "Wrong event marker: " << *addr << std::endl;
-    //    return false;
-    //}
-
-    //convert DAQ Buffer to ElecEvent
-    m_buf->l1id = addr[4];
-    int headerSize = addr[1]/4;  //in words
-    int totalSize = addr[3]/4;   //in words
-
-    nav->setTimeStamp(TTimeStamp(addr[8], addr[7]));
-    header->setEventID(addr[5]);
-
-    std::list<JM::CalibPMTChannel*> _col;
-    JM::CalibPMTChannel* _ch = nullptr;
-    std::vector<double> _charge;
-    std::vector<double> _time;
-    int lastPmtId = -1;
-
-    static const int qtSize = 3;  //in words
-    int idx = headerSize;
-    while ( idx < totalSize ) {
-        if ( idx + qtSize > totalSize ) {
-            LogFatal << "Wrong QT size" << std::endl;
-            return false;
-        }
-        uint32_t* pqt = (uint32_t*)(addr+idx);
-        int pmtId = *pqt;
-        float* pvalue = (float*)(pqt+1);
-        float charge = pvalue[0];
-        float time = pvalue[1];
-        if ( pmtId != lastPmtId ) {
-            if ( lastPmtId != -1 ) {
-                _ch = new JM::CalibPMTChannel(lastPmtId);
-                _ch->setCharge(_charge);
-                _ch->setTime(_time);
-                _col.push_back(_ch);
-                _charge.clear();
-                _time.clear();
-            }
-            lastPmtId = pmtId;
-        }
-        _charge.push_back(charge);
-        _time.push_back(time);
-        idx += qtSize;
-        if ( idx == totalSize ) {
-            _ch = new JM::CalibPMTChannel(pmtId);
-            _ch->setCharge(_charge);
-            _ch->setTime(_time);
-            _col.push_back(_ch);
-        }
-    }
-
-    event->setCalibPMTCol(_col);
-
-    return true;
-}
