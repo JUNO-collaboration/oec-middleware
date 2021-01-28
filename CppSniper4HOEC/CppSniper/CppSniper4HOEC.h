@@ -28,7 +28,7 @@ class CppSniper4HOEC
 
         struct BufAndEvts {
             int count;
-            oec::simpleBuffer* buf;
+            oec::simpleBuffer buf;
             std::deque<oec::OECRecEvt*> evts;
         };
         std::map<uint32_t, BufAndEvts> m_dataMap;

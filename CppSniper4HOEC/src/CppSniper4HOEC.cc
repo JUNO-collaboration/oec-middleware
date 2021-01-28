@@ -52,7 +52,7 @@ void CppSniper4HOEC::process(oec::simpleBuffer* input, oec::EventDepository* out
 
     auto& inputData = m_dataMap[m_input->m_l1id];
     inputData.count = wfVtxs.size();
-    inputData.buf = input;
+    inputData.buf = *input;
 
     for ( auto wfVtx : wfVtxs ) {
         inputData.evts.push_back(wfVtx);
@@ -69,8 +69,10 @@ void CppSniper4HOEC::process(oec::simpleBuffer* input, oec::EventDepository* out
             _evts.front()->tag = _tag;
             _evts.pop_front();
             if ( --_data.count == 0 ) {
-                std::cout << __FILE__ << __LINE__ << " completed l1id: " << _l1id << std::endl;
-                output->addsimbuf(_l1id, *_data.buf);
+                //std::cout << __FILE__ << __LINE__ << " completed l1id: " << _l1id
+                //    << " event number: " << oec::OECVertex((uint8_t*)(_data.buf.ptr)).getWaveVertex().size()
+                //    << std::endl;
+                output->addsimbuf(_l1id, _data.buf);
                 m_dataMap.erase(_it);
             }
         }

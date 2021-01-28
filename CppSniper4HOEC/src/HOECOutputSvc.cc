@@ -44,7 +44,7 @@ bool HOECOutputSvc::put(uint32_t& l1id, uint32_t& tag)
     LogInfo << " L1ID: " << oecHeader->l1id()
         << " EventID: " << oecHeader->EventID()
         << " TAG: 0x" << std::hex << oecEvent->getTag() << std::dec
-        << " time: " << nav->TimeStamp()
+        //<< " time: " << nav->TimeStamp()
         << " energy: " << oecEvent->getEnergy()
         << " vertex: [" << oecEvent->getVertexX()
         << ", " << oecEvent->getVertexY()
