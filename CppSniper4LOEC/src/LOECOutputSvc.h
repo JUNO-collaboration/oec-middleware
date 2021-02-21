@@ -15,17 +15,20 @@ class LOECOutputSvc : public SvcBase
 
         bool initialize();
         bool finalize();
+        bool putQT(oec::simpleBuffer& qtEvt);
+        bool putVertex(oec::simpleBuffer& vtxEvt);
+        void clear();
 
-        bool put(oec::simpleBuffer& output);
+        int         m_totalInPack;
 
     private :
 
-        bool putQT(oec::simpleBuffer& qtEvt);
-        bool putVertex(oec::simpleBuffer& vtxEvt);
 
-        bool (LOECOutputSvc::*m_put)(oec::simpleBuffer& evt);
 
         LOECNavBuf* m_buf;
+        void*       m_cache;
+        int         m_nInPack;
+
         std::string m_type;
 };
 
