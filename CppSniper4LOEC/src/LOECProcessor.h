@@ -23,7 +23,10 @@ public:
 
 private:
     std::vector<boost::thread*> m_threads;
-    
+
+    int initialNum; 
+    boost::mutex initialMutex;
+    boost::condition checkInitialize;
 
     std::vector<oec::EventDepository*> jobQueue;
     boost::mutex jobQueueMutex;
@@ -34,6 +37,10 @@ private:
     boost::mutex doneMutex; 
     boost::condition doneJob;
     void finishJob();
+
+    
+
+    boost::mutex cppSniperMutex;
 
     void thrdWork();
     

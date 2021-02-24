@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 
+#include <boost/thread/mutex.hpp>
 
 class Task;
 class LOECInputSvc;
@@ -14,7 +15,7 @@ class LOECOutputSvc;
 class CppSniper4LOEC 
 {
     public:
-        CppSniper4LOEC(const std::string& PyModule);
+        CppSniper4LOEC(boost::mutex& cppSniperMutex, const std::string& PyModule);
         virtual ~CppSniper4LOEC();
 
         virtual void process(oec::EventDepository* );
@@ -28,6 +29,8 @@ class CppSniper4LOEC
         LOECOutputSvc* m_output;
 
         boost::python::object m_pyTask;
+
+        static int waveTaskNum;
 };
 
 #endif

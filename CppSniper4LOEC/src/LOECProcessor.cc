@@ -1,16 +1,31 @@
 #include "LOECProcessor.h"
 #include "CppSniper/CppSniper4LOEC.h"
+#include "TROOT.h"
 #include <iostream>
 
 LOECProcessor::LOECProcessor(int thrNum = 1){
     std::cout<<"Start multi-thread version"<<std::endl;
+    
+    initialNum = 0;
 
-    m_threads.reserve(thrNum);
+    if (thrNum > 1) {
+        ROOT::EnableThreadSafety();
+        m_threads.reserve(thrNum);
+    }
     for(int i = 0;i < thrNum; i++){
         std::cout<<"Try to create a Thread"<<std::endl;
         m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this)));
     }
+
     
+    while(true){
+        boost::mutex::scoped_lock lock(initialMutex);
+        if(initialNum == thrNum) break;
+        checkInitialize.wait(lock);
+    }
+    
+    //sleep(300);
+    std::cout<<"********************* All threads has been created *******************"<<std::endl;
 }
 
 LOECProcessor::~LOECProcessor(){
@@ -25,26 +40,36 @@ void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
     jobQueue = *evDepoes;
     workToBeDone.notify_all();
 
+    
     while(true){
         //std::cout<<"Check if all jobs have been completed"<<std::endl;
         boost::mutex::scoped_lock lock(doneMutex);
         doneJob.wait(lock);
         if(jobDoneNum == evDepoes->size()) break;
     }
-
+    
     std::cout<<"****************All jobs has been finished******************"<<std::endl;
     std::cout<<"****************        ps is done        ******************"<<std::endl;
     return;
 }
 
 void LOECProcessor::thrdWork(){
-    CppSniper4LOEC m_rec("LOECWaveformRec");
+    CppSniper4LOEC m_rec(cppSniperMutex, "LOECWaveformRec");
     std::cout<<"Initialize a CppSnipper"<<std::endl;
+    
+    
+    initialMutex.lock();
+    initialNum++;
+    initialMutex.unlock();
+    checkInitialize.notify_one();
+    
     
     while(true){
         std::cout<<"Thread "<<boost::this_thread::get_id()<< "is ready for a job"<<std::endl;
         m_rec.process(getJob());
+        //getJob();
         finishJob();
+        //std::cout<<"Thread "<<boost::this_thread::get_id()<< "finished a job"<<std::endl;
     }    
 }
 

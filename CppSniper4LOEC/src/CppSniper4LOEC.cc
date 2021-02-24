@@ -8,26 +8,35 @@
 #include "OEC_com/oec_com/pack.h"
 #include "SniperKernel/SniperLog.h"
 
-CppSniper4LOEC::CppSniper4LOEC(const std::string& PyModule = "LOECWaveformRec")
-{   
+#include <iostream>
 
+int CppSniper4LOEC::waveTaskNum = 0;
+
+CppSniper4LOEC::CppSniper4LOEC(boost::mutex& cppSniperMutex, const std::string& PyModule = "LOECWaveformRec")
+{   
+    
+    
+    cppSniperMutex.lock();
     LogInfo << "Start to Py_IsInitialize" << std::endl;
     if ( ! Py_IsInitialized() ) {
         Py_Initialize();
     }
-
     LogInfo << "Start to create pytask" << std::endl;
     boost::python::object config = boost::python::import(PyModule.c_str());
-    m_pyTask = config.attr("GetTask")();
+    waveTaskNum++;
+    m_pyTask = config.attr("GetTask")(waveTaskNum);
 
-    LogInfo << "To get Cpp task" << std::endl;
+    std::cout << "To get Cpp task" << std::endl;
     m_task = boost::python::extract<Task*>(m_pyTask);
     m_task->Snoopy().config();
     m_task->Snoopy().initialize();
-
+    cppSniperMutex.unlock();
     //m_input = dynamic_cast<IOECInputSvc*>(m_task->find("InputSvc"));
     m_input = dynamic_cast<LOECInputSvc*>(m_task->find("InputSvc"));
     m_output = dynamic_cast<LOECOutputSvc*>(m_task->find("OutputSvc"));
+
+    
+    
 
     if ( PyModule == "LOECWaveformRec" ) {
         //waveform reconstruction
