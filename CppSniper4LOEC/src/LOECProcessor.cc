@@ -1,5 +1,4 @@
 #include "LOECProcessor.h"
-#include "CppSniper/CppSniper4LOEC.h"
 #include "TROOT.h"
 #include <iostream>
 
@@ -8,22 +7,22 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
     
     initialNum = 0;
 
-    if (thrNum > 1) {
-        ROOT::EnableThreadSafety();
-        m_threads.reserve(thrNum);
-    }
+    if (thrNum > 1) ROOT::EnableThreadSafety();
+
+    Py_Initialize();
+    //PyEval_InitThreads();
+    //PyEval_ReleaseLock();
+    
+    m_threads.reserve(thrNum);
+    m_cppSnps.reserve(thrNum);
+
     for(int i = 0;i < thrNum; i++){
         std::cout<<"Try to create a Thread"<<std::endl;
-        m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this)));
+        CppSniper4LOEC m_rec("LOECWaveformRec");
+        m_cppSnps.push_back(m_rec);
+        m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this,i)));
     }
-
-    
-    while(true){
-        boost::mutex::scoped_lock lock(initialMutex);
-        if(initialNum == thrNum) break;
-        checkInitialize.wait(lock);
-    }
-    
+    //initFinalize(thrNum);
     //sleep(300);
     std::cout<<"********************* All threads has been created *******************"<<std::endl;
 }
@@ -53,16 +52,15 @@ void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
     return;
 }
 
-void LOECProcessor::thrdWork(){
-    CppSniper4LOEC m_rec(cppSniperMutex, "LOECWaveformRec");
+void LOECProcessor::thrdWork(int i){
+    CppSniper4LOEC& m_rec = m_cppSnps[i];
+    m_rec.initialize();
     std::cout<<"Initialize a CppSnipper"<<std::endl;
-    
     
     initialMutex.lock();
     initialNum++;
     initialMutex.unlock();
-    checkInitialize.notify_one();
-    
+    //checkInitialize.notify_one();
     
     while(true){
         std::cout<<"Thread "<<boost::this_thread::get_id()<< "is ready for a job"<<std::endl;
@@ -92,10 +90,17 @@ void LOECProcessor::finishJob(){
     doneJob.notify_one();
 }
 
+void LOECProcessor::initFinalize(int thrNum){
+    while(true){
+        boost::mutex::scoped_lock lock(initialMutex);
+        if(initialNum == thrNum) break;
+        checkInitialize.wait(lock);
+    }
+}
 
 extern "C" {
     oec::AlgInterface *create_processor()
     {
-        return new LOECProcessor(2);
+        return new LOECProcessor(6);
     }
 }

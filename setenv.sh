@@ -1,8 +1,7 @@
 #!/bin/bash
 
-export JUNOTOP=/home/bes/zoujh/besfs5/JunoOEC
-MyWorkArea=/home/bes/zoujh/besfs5/JunoOEC
-
+export JUNOTOP=/junofs/users/yangyixiang/OEC_project
+MyWorkArea=/junofs/users/yangyixiang/OEC_project
 source ${JUNOTOP}/oec-adaptor/setup.sh
 source ${JUNOTOP}/CMT/v1r26/mgr/setup.sh
 

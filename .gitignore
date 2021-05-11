@@ -9,3 +9,4 @@ Linux*
 *.pyc
 build
 install
+lib

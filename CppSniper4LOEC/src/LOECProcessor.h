@@ -3,6 +3,7 @@
 
 #include "OEC_com/oec_com/EventDepository.h"
 #include "OEC_com/oec_com/AlgInterface.h"
+#include "CppSniper/CppSniper4LOEC.h"
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
@@ -23,28 +24,27 @@ public:
 
 private:
     std::vector<boost::thread*> m_threads;
+    std::vector<CppSniper4LOEC> m_cppSnps;
 
     int initialNum; 
     boost::mutex initialMutex;
     boost::condition checkInitialize;
+    
 
     std::vector<oec::EventDepository*> jobQueue;
     boost::mutex jobQueueMutex;
     boost::condition workToBeDone;
-    oec::EventDepository* getJob();
+    
 
     int jobDoneNum;
     boost::mutex doneMutex; 
     boost::condition doneJob;
+    
+
+    void thrdWork(int);
+    oec::EventDepository* getJob();
     void finishJob();
-
-    
-
-    boost::mutex cppSniperMutex;
-
-    void thrdWork();
-    
-    
+    void initFinalize(int thrNum);
 };
 
 #endif

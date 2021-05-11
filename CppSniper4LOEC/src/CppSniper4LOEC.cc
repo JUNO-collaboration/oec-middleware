@@ -11,16 +11,15 @@
 #include <iostream>
 
 int CppSniper4LOEC::waveTaskNum = 0;
-
-CppSniper4LOEC::CppSniper4LOEC(boost::mutex& cppSniperMutex, const std::string& PyModule = "LOECWaveformRec")
+boost::mutex CppSniper4LOEC::cppSniperMutex;
+CppSniper4LOEC::CppSniper4LOEC(const std::string& PyModule = "LOECWaveformRec")
 {   
-    
-    
-    cppSniperMutex.lock();
     LogInfo << "Start to Py_IsInitialize" << std::endl;
+    /*
     if ( ! Py_IsInitialized() ) {
         Py_Initialize();
     }
+    */
     LogInfo << "Start to create pytask" << std::endl;
     boost::python::object config = boost::python::import(PyModule.c_str());
     waveTaskNum++;
@@ -28,29 +27,7 @@ CppSniper4LOEC::CppSniper4LOEC(boost::mutex& cppSniperMutex, const std::string& 
 
     std::cout << "To get Cpp task" << std::endl;
     m_task = boost::python::extract<Task*>(m_pyTask);
-    m_task->Snoopy().config();
-    m_task->Snoopy().initialize();
-    cppSniperMutex.unlock();
     //m_input = dynamic_cast<IOECInputSvc*>(m_task->find("InputSvc"));
-    m_input = dynamic_cast<LOECInputSvc*>(m_task->find("InputSvc"));
-    m_output = dynamic_cast<LOECOutputSvc*>(m_task->find("OutputSvc"));
-
-    
-    
-
-    if ( PyModule == "LOECWaveformRec" ) {
-        //waveform reconstruction
-        m_itag = STREAM_TAG_WAVE;
-        m_otag = STREAM_TAG_WAVE_TQ;
-    }
-    else if ( PyModule == "LOECVertexRec" ) {
-        //vertex reconstruction
-        m_itag = STREAM_TAG_WAVE_TQ;
-        m_otag = EVENTS_VERTEX_WAVE;
-    }
-    else {
-        //Wrong ...
-    }
 }
 
 CppSniper4LOEC::~CppSniper4LOEC()
@@ -60,6 +37,15 @@ CppSniper4LOEC::~CppSniper4LOEC()
     // this must not be invoked by current version of boost.python
     // Py_Finalize();
     // may be fixed in a future version
+}
+
+void CppSniper4LOEC:: initialize(){
+    m_task->Snoopy().config();
+    m_task->Snoopy().initialize();
+    
+    //m_input = dynamic_cast<IOECInputSvc*>(m_task->find("InputSvc"));
+    m_input = dynamic_cast<LOECInputSvc*>(m_task->find("InputSvc"));
+    m_output = dynamic_cast<LOECOutputSvc*>(m_task->find("OutputSvc"));
 }
 
 void CppSniper4LOEC:: process(oec::EventDepository* one_eventDepo)
