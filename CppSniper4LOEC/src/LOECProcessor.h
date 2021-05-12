@@ -24,7 +24,7 @@ public:
 
 private:
     std::vector<boost::thread*> m_threads;
-    std::vector<CppSniper4LOEC> m_cppSnps;
+    std::vector<CppSniper4LOEC*> m_cppSnps;
 
     int initialNum; 
     boost::mutex initialMutex;

@@ -18,8 +18,8 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
 
     for(int i = 0;i < thrNum; i++){
         std::cout<<"Try to create a Thread"<<std::endl;
-        CppSniper4LOEC m_rec("LOECWaveformRec");
-        m_cppSnps.push_back(m_rec);
+        //CppSniper4LOEC m_rec("LOECWaveformRec");
+        m_cppSnps.push_back(new CppSniper4LOEC("LOECWaveformRec"));
         m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this,i)));
     }
     //initFinalize(thrNum);
@@ -29,7 +29,10 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
 
 LOECProcessor::~LOECProcessor(){
     for(int i = 0; i < m_threads.size(); i++){
+        workToBeDone.notify_all();
+        m_threads[i]->interrupt();
         delete m_threads[i];
+        delete m_cppSnps[i];
     }
 }
 
@@ -53,7 +56,7 @@ void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
 }
 
 void LOECProcessor::thrdWork(int i){
-    CppSniper4LOEC& m_rec = m_cppSnps[i];
+    CppSniper4LOEC& m_rec = *m_cppSnps[i];
     m_rec.initialize();
     std::cout<<"Initialize a CppSnipper"<<std::endl;
     
@@ -75,6 +78,7 @@ oec::EventDepository* LOECProcessor::getJob(){
     //std::cout<<"Try to get a job"<<std::endl;
     boost::mutex::scoped_lock lock(jobQueueMutex);
     while(true){
+        boost::this_thread::interruption_point();
         if(jobQueue.empty()) workToBeDone.wait(lock);
         else break;
     }
@@ -101,6 +105,6 @@ void LOECProcessor::initFinalize(int thrNum){
 extern "C" {
     oec::AlgInterface *create_processor()
     {
-        return new LOECProcessor(3);
+        return new LOECProcessor(1);
     }
 }
