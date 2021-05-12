@@ -98,9 +98,9 @@ bool LOECOutputSvc::putQT(oec::simpleBuffer& qtEvt)
 
 bool LOECOutputSvc::putVertex(oec::simpleBuffer& vtxEvt)
 {
-    std::cout << "Try to get Navigator" << std::endl;
+    //std::cout << "Try to get Navigator" << std::endl;
     JM::EvtNavigator* nav = m_buf->curEvt();
-    std::cout << "Try to get Header" << std::endl;
+    //std::cout << "Try to get Header" << std::endl;
     auto oecHeader = dynamic_cast<JM::OECHeader*>(nav->getHeader("/Event/OEC"));
     if ( ! oecHeader ) {
         LogFatal << "Failed to get OECHeader" << std::endl;

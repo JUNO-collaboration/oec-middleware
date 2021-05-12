@@ -42,7 +42,7 @@ bool LOECInputSvc::finalize()
 
 bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
 {   
-    std::cout<<"Start get waveform "<<std::endl;
+    //std::cout<<"Start get waveform "<<std::endl;
     JM::EvtNavigator* nav = new JM::EvtNavigator();
     m_buf->set(nav);
 
@@ -103,7 +103,7 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
         }
         idx += wfSize;
     }
-    std::cout<<"get waveform end"<<std::endl;
+    //std::cout<<"get waveform end"<<std::endl;
     return true;
 }
 

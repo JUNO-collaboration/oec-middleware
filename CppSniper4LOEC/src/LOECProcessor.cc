@@ -1,36 +1,106 @@
 #include "LOECProcessor.h"
-#include "CppSniper/CppSniper4LOEC.h"
-#include "OEC_com/oec_com/pack.h"
-#include "OEC_com/oec_com/OEC_define.h"
+#include "TROOT.h"
 #include <iostream>
 
-LOECProcessor::LOECProcessor()
-{
-    m_wfRec = new CppSniper4LOEC("LOECWaveformRec");
-    m_vtxRec = new CppSniper4LOEC("LOECVertexRec");
+LOECProcessor::LOECProcessor(int thrNum = 1){
+    std::cout<<"Start multi-thread version"<<std::endl;
+    
+    initialNum = 0;
+
+    if (thrNum > 1) ROOT::EnableThreadSafety();
+
+    Py_Initialize();
+    //PyEval_InitThreads();
+    //PyEval_ReleaseLock();
+    
+    m_threads.reserve(thrNum);
+    m_cppSnps.reserve(thrNum);
+
+    for(int i = 0;i < thrNum; i++){
+        std::cout<<"Try to create a Thread"<<std::endl;
+        CppSniper4LOEC m_rec("LOECWaveformRec");
+        m_cppSnps.push_back(m_rec);
+        m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this,i)));
+    }
+    //initFinalize(thrNum);
+    //sleep(300);
+    std::cout<<"********************* All threads has been created *******************"<<std::endl;
 }
 
-LOECProcessor::~LOECProcessor()
-{
-    delete m_wfRec;
-    delete m_vtxRec;
+LOECProcessor::~LOECProcessor(){
+    for(int i = 0; i < m_threads.size(); i++){
+        delete m_threads[i];
+    }
 }
 
-void LOECProcessor::oec_process(void* event, void* /*nullptr*/ )
-{
-    oec::EventDepository* data = reinterpret_cast<oec::EventDepository*>(event);
-    auto& bufMap = data->getOneEventSimpleBufferMap();
+void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
+    jobDoneNum = 0;
+    std::vector<oec::EventDepository*>* evDepoes = reinterpret_cast<std::vector<oec::EventDepository*>*>(input);
+    jobQueue = *evDepoes;
+    workToBeDone.notify_all();
 
-    // waveform reconstruction
-    m_wfRec->process(bufMap[STREAM_TAG_WAVE], bufMap[STREAM_TAG_WAVE_TQ]);
+    
+    while(true){
+        //std::cout<<"Check if all jobs have been completed"<<std::endl;
+        boost::mutex::scoped_lock lock(doneMutex);
+        doneJob.wait(lock);
+        if(jobDoneNum == evDepoes->size()) break;
+    }
+    
+    std::cout<<"****************All jobs has been finished******************"<<std::endl;
+    std::cout<<"****************        ps is done        ******************"<<std::endl;
+    return;
+}
 
-    // vertex reconstruction and low level OEC
-    m_vtxRec->process(bufMap[STREAM_TAG_WAVE_TQ], bufMap[EVENTS_VERTEX_WAVE]);
+void LOECProcessor::thrdWork(int i){
+    CppSniper4LOEC& m_rec = m_cppSnps[i];
+    m_rec.initialize();
+    std::cout<<"Initialize a CppSnipper"<<std::endl;
+    
+    initialMutex.lock();
+    initialNum++;
+    initialMutex.unlock();
+    //checkInitialize.notify_one();
+    
+    while(true){
+        std::cout<<"Thread "<<boost::this_thread::get_id()<< "is ready for a job"<<std::endl;
+        m_rec.process(getJob());
+        //getJob();
+        finishJob();
+        //std::cout<<"Thread "<<boost::this_thread::get_id()<< "finished a job"<<std::endl;
+    }    
+}
+
+oec::EventDepository* LOECProcessor::getJob(){
+    //std::cout<<"Try to get a job"<<std::endl;
+    boost::mutex::scoped_lock lock(jobQueueMutex);
+    while(true){
+        if(jobQueue.empty()) workToBeDone.wait(lock);
+        else break;
+    }
+    oec::EventDepository* job = jobQueue.back();
+    jobQueue.pop_back();
+    //std::cout<<"Got one job"<<std::endl;
+    return job;
+}
+
+void LOECProcessor::finishJob(){
+    boost::mutex::scoped_lock lock(doneMutex);
+    jobDoneNum++;
+    doneJob.notify_one();
+}
+
+void LOECProcessor::initFinalize(int thrNum){
+    while(true){
+        boost::mutex::scoped_lock lock(initialMutex);
+        if(initialNum == thrNum) break;
+        checkInitialize.wait(lock);
+    }
 }
 
 extern "C" {
     oec::AlgInterface *create_processor()
     {
-        return new LOECProcessor;
+        return new LOECProcessor(3);
     }
 }

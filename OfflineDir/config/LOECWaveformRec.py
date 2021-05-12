@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-def GetTask():
+def GetTask(waveTaskNum):
     import os
     offlineDir = os.getenv("OFFLINE_DIR")
 
     import Sniper
     Sniper.setLogLevel(5)
-    task = Sniper.TopTask("WfTask")
+    task = Sniper.TopTask("WfTask"+str(waveTaskNum))
     task.setEvtMax(-1)
 
     Sniper.loadDll("libCppSniper4LOEC.so")
@@ -42,6 +42,10 @@ def GetTask():
     decon.property("CalibFile").set(offlineDir + "/data/SPE_v20.root")
     decon.property("Filter").set(offlineDir + "/data/filter3_m.root")
 
+    import RootWriter
+    rootwriter = task.createSvc("RootWriter")
+    rootwriter.property("Output").set({"CALIBEVT":"test.root"})
+
     ## custom settings
     #isvc.setLogLevel(2)
 
@@ -49,14 +53,7 @@ def GetTask():
 
 
 ###################Vertex Rec alg and Svc##################
-    import OECTagSvc
-    lectagsvc = task.createSvc("OECTagSvc")
-    lectagsvc.property("OECTagFile").set(offlineDir + "/config/tag.xml")
-    import EvtConfig
-    evtconfig = task.createSvc("EvtConfigSvc")
-    evtconfig.property("seqListFile").set(offlineDir + "/config/seq.xml")
-    evtconfig.property("sigListFile").set(offlineDir + "/config/LOEC_sig.xml")
-
+ 
     #store energy and time for tag
     import EvtStore
     task.property("svcs").append("EvtStoreSvc")
@@ -72,6 +69,14 @@ def GetTask():
     geosvc.property("FastInit").set(True)
     import JunoTimer
     task.createSvc("JunoTimerSvc")
+
+    import OECTagSvc
+    lectagsvc = task.createSvc("OECTagSvc")
+    lectagsvc.property("OECTagFile").set(offlineDir + "/config/tag.xml")
+    import EvtConfig
+    evtconfig = task.createSvc("EvtConfigSvc")
+    evtconfig.property("seqListFile").set(offlineDir + "/config/seq.xml")
+    evtconfig.property("sigListFile").set(offlineDir + "/config/LOEC_sig.xml")
 
     import EvtAlgorithms
     import EvtSteering
@@ -90,7 +95,7 @@ def GetTask():
 
 if __name__ == "__main__":
 
-    task = GetTask()
+    task = GetTask(0)
     task.setEvtMax(10)
     task.setLogLevel(2)
     task.show()
