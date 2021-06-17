@@ -1,11 +1,11 @@
 #include "CppSniper/CppSniper4LOEC.h"
 #include "LOECInputSvc.h"
 #include "LOECOutputSvc.h"
-#include "SniperKernel/Task.h"
 
-#include <Python.h>
 #include "OEC_com/oec_com/OEC_define.h"
 #include "OEC_com/oec_com/pack.h"
+#include "SniperKernel/Sniper.h"
+#include "SniperKernel/Task.h"
 #include "SniperKernel/SniperLog.h"
 
 #include <iostream>
@@ -14,29 +14,19 @@ int CppSniper4LOEC::waveTaskNum = 0;
 boost::mutex CppSniper4LOEC::cppSniperMutex;
 CppSniper4LOEC::CppSniper4LOEC(const std::string& PyModule = "LOECWaveformRec")
 {   
-    LogInfo << "Start to Py_IsInitialize" << std::endl;
-    /*
-    if ( ! Py_IsInitialized() ) {
-        Py_Initialize();
-    }
-    */
-    LogInfo << "Start to create pytask" << std::endl;
-    boost::python::object config = boost::python::import(PyModule.c_str());
-    waveTaskNum++;
-    m_pyTask = config.attr("GetTask")(waveTaskNum);
+    LogInfo << "To get Cpp task" << std::endl;
 
-    std::cout << "To get Cpp task" << std::endl;
-    m_task = boost::python::extract<Task*>(m_pyTask);
-    //m_input = dynamic_cast<IOECInputSvc*>(m_task->find("InputSvc"));
+    auto fcfg = std::string{getenv("OFFLINE_DIR")} + "/config/LOECConfig.json";
+    auto jtask = Sniper::eval(fcfg.c_str());
+    m_task = dynamic_cast<Task*>(jtask);
+
+    waveTaskNum++;
 }
 
 CppSniper4LOEC::~CppSniper4LOEC()
 {
     m_task->Snoopy().finalize();
-
-    // this must not be invoked by current version of boost.python
-    // Py_Finalize();
-    // may be fixed in a future version
+    delete m_task;
 }
 
 void CppSniper4LOEC:: initialize(){

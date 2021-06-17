@@ -3,17 +3,14 @@
 #include "HOECOutputSvc.h"
 #include "OEC_com/oec_com/parse.h"
 #include "SniperKernel/Task.h"
-#include <Python.h>
+#include "SniperKernel/Sniper.h"
 
 CppSniper4HOEC::CppSniper4HOEC(const std::string& PyModule)
 {
-    if ( ! Py_IsInitialized() ) {
-        Py_Initialize();
-    }
-    boost::python::object config = boost::python::import(PyModule.c_str());
-    m_pyTask = config.attr("GetTask")();
+    auto fcfg = std::string{getenv("OFFLINE_DIR")} + "/config/HOECConfig.json";
+    auto jtask = Sniper::eval(fcfg.c_str());
+    m_task = dynamic_cast<Task*>(jtask);
 
-    m_task = boost::python::extract<Task*>(m_pyTask);
     m_task->Snoopy().config();
     m_task->Snoopy().initialize();
 
@@ -24,10 +21,7 @@ CppSniper4HOEC::CppSniper4HOEC(const std::string& PyModule)
 CppSniper4HOEC::~CppSniper4HOEC()
 {
     m_task->Snoopy().finalize();
-
-    // this must not be invoked by current version of boost.python
-    // Py_Finalize();
-    // may be fixed in a future version
+    delete m_task;
 }
 
 void CppSniper4HOEC::process(oec::simpleBuffer* input, oec::EventDepository* output)

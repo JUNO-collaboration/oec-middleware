@@ -1,0 +1,147 @@
+{
+  "sniper": {
+    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so", "libPMTCalibSvc.so", "libDeconvolution.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtConfig.so", "libEvtAlgorithms.so", "libEvtSteering.so", "libSimpleRecAlg.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so" ],
+    "LogLevel": 5
+  },
+  "identifier": "TopTask/WfTask0",
+  "properties": {
+    "EvtMax": -1,
+    "LogLevel": 5
+  },
+  "services": [
+    {
+      "identifier": "LOECEvtMemMgr/LOECEvtMemMgr"
+    },
+    {
+      "identifier": "LOECInputSvc/InputSvc",
+      "properties": {
+        "InputType": "Waveform"
+      }
+    },
+    {
+      "identifier": "LOECOutputSvc/OutputSvc",
+      "properties": {
+        "OutputType": "QT"
+      }
+    },
+    {
+      "identifier": "PMTParamSvc/PMTParamSvc",
+      "properties": {
+        "DBType": "File",
+        "Path": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/pmtdata.txt"
+      }
+    },
+    {
+      "identifier": "PMTCalibSvc/PMTCalibSvc",
+      "properties": {
+        "DBcur": 20201218,
+        "DirPath": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data",
+        "ReadDB": 0
+      }
+    },
+    {
+      "identifier": "RootWriter/RootWriter",
+      "properties": {
+        "Output": { "CALIBEVT": "test.root" }
+      }
+    },
+    {
+      "identifier": "EvtStoreSvc/EvtStoreSvc"
+    },
+    {
+      "identifier": "EvtResultSvc/EvtResultSvc"
+    },
+    {
+      "identifier": "RecGeomSvc/RecGeomSvc",
+      "properties": {
+        "FastInit": true,
+        "GeomFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/sample_detsim.root",
+        "GeomPathInRoot": "JunoGeom",
+        "InitCD": true,
+        "InitTT": true,
+        "InitWP": true
+      }
+    },
+    {
+      "identifier": "JunoTimerSvc/JunoTimerSvc"
+    },
+    {
+      "identifier": "OECTagSvc/OECTagSvc",
+      "properties": {
+        "OECTagFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/tag.xml"
+      }
+    },
+    {
+      "identifier": "EvtConfigSvc/EvtConfigSvc",
+      "properties": {
+        "VarString": "",
+        "seqListFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/seq.xml",
+        "sigListFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/LOEC_sig.xml"
+      }
+    }
+  ],
+  "algorithms": [
+    {
+      "identifier": "Deconvolution/Deconvolution",
+      "properties": {
+        "Calib": 0,
+        "CalibFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/SPE_v20.root",
+        "DBcur": 20201218,
+        "Filter": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/filter3_m.root",
+        "HitCounting": 0,
+        "Length": 1250,
+        "Para1": 110,
+        "Para2": 160,
+        "Para3": 15,
+        "Para4": 80,
+        "Para5": 130,
+        "Para6": 15,
+        "ReadDB": 0,
+        "Threshold1": 0.025,
+        "Threshold2": 0.025,
+        "TotalPMT": 17612,
+        "WidthThreshold1": 12,
+        "WidthThreshold2": 12,
+        "Window1": 9,
+        "Window2": 9
+      }
+    },
+    {
+      "identifier": "StepHandler/StepHandler"
+    }
+  ],
+  "subtasks": [
+    {
+      "identifier": "Task/subTask_RecCdMuonAlg",
+      "properties": {
+        "EvtMax": -1
+      },
+      "services": [],
+      "algorithms": [
+        {
+          "identifier": "RecCdMuonAlg/RecCdMuonAlg",
+          "properties": {
+            "OutputPmtPos": false,
+            "Pmt20inchTimeReso": 8,
+            "Pmt3inchTimeReso": 1,
+            "RecTool": "SpmtMuonRecTool",
+            "Use20inchPMT": true,
+            "Use3inchPMT": true
+          },
+          "tools": [
+            {
+              "identifier": "SpmtMuonRecTool/SpmtMuonRecTool",
+              "properties": {
+                "DistanceCut": 7000,
+                "LogLevel": 5,
+                "MaxPoints": 7,
+                "NpmtCut": 1,
+                "PECut": 53
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

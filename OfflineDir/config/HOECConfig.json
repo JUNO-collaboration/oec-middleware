@@ -1,0 +1,42 @@
+{
+  "sniper": {
+    "LoadDlls": [ "libCppSniper4HOEC.so", "libOECTagSvc.so", "libOECConfigSvc.so", "libHECAlg.so" ],
+    "LogLevel": 5
+  },
+  "identifier": "Task/OECTask",
+  "properties": {
+    "EvtMax": -1,
+    "LogLevel": 5
+  },
+  "services": [
+    {
+      "identifier": "HOECEvtMemMgr/HOECEvtMemMgr",
+      "properties": {
+        "TimeWindow": [ 0, 0 ]
+      }
+    },
+    {
+      "identifier": "HOECInputSvc/InputSvc"
+    },
+    {
+      "identifier": "HOECOutputSvc/OutputSvc"
+    },
+    {
+      "identifier": "OECTagSvc/OECTagSvc",
+      "properties": {
+        "OECTagFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/tag.xml"
+      }
+    },
+    {
+      "identifier": "OECConfigSvc/OECConfigSvc",
+      "properties": {
+        "OECListFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/HOEC_sig.xml"
+      }
+    }
+  ],
+  "algorithms": [
+    {
+      "identifier": "HECAlg/HECAlg"
+    }
+  ]
+}

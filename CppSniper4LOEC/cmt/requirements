@@ -10,5 +10,6 @@ use Boost          v* Externals
 
 apply_pattern install_more_includes more="CppSniper"
 
+macro_append CppSniper4LOEC_use_linkopts " -lboost_thread -lboost_system "
 library CppSniper4LOEC *.cc
 apply_pattern linker_library library=CppSniper4LOEC

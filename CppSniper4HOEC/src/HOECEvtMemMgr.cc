@@ -20,13 +20,11 @@ HOECEvtMemMgr::~HOECEvtMemMgr()
 
 bool HOECEvtMemMgr::initialize()
 {
-    Task* par = getParent();
-
     if ( m_bufBounds.size() != 2 ) {
         m_bufBounds.resize(2);
         m_bufBounds[0] = -1.0, m_bufBounds[1] = 1.0;
     }
-    SniperPtr<DataMemSvc> mSvc(*par, "DataMemSvc");
+    SniperPtr<DataMemSvc> mSvc(m_par, "DataMemSvc");
     mSvc->regist("/Event", new HOECNavBuf(m_bufBounds[0], m_bufBounds[1]));
 
     return true;

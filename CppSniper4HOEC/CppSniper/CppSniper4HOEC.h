@@ -3,7 +3,7 @@
 
 #include "OEC_com/oec_com/EventDepository.h"
 #include "OEC_com/oec_com/OEC_define.h"
-#include <boost/python.hpp>
+//#include <boost/python.hpp>
 #include <deque>
 #include <string>
 
@@ -24,7 +24,7 @@ class CppSniper4HOEC
         HOECInputSvc*  m_input;
         HOECOutputSvc* m_output;
 
-        boost::python::object m_pyTask;
+        //boost::python::object m_pyTask;
 
         struct BufAndEvts {
             int count;

@@ -1,10 +1,12 @@
 #!/bin/bash
 
-export JUNOTOP=/junofs/users/yangyixiang/OEC_project
-MyWorkArea=/junofs/users/yangyixiang/OEC_project
+export JUNOTOP=/sharefs/bes/zoujh/juno/JunoOEC
+MyWorkArea=/sharefs/bes/zoujh/juno/JunoOEC
 source ${JUNOTOP}/oec-adaptor/setup.sh
+source ${JUNOTOP}/external/sniper/share/sniper/setup.sh
 source ${JUNOTOP}/CMT/v1r26/mgr/setup.sh
 
+export SNIPER_INIT_FILE=${OFFLINE_DIR}/config/.init.json
 export CMTPROJECTPATH=${JUNOTOP}:${CMTPROJECTPATH}
 
 export JUNO_EXTLIB_Boost_HOME=${JUNOTOP}/external/installed
@@ -13,6 +15,7 @@ export BOOST_PYTHON_SUFFIX=""
 
 
 export JUNO_EXTLIB_CLHEP_HOME=${JUNOTOP}/external/offline
+export JUNO_EXTLIB_frontier_HOME=${JUNOTOP}/external/offline
 export PATH=${JUNO_EXTLIB_CLHEP_HOME}/bin:${PATH}
 export LD_LIBRARY_PATH=${JUNO_EXTLIB_CLHEP_HOME}/lib:${LD_LIBRARY_PATH}
 export CPATH=${JUNO_EXTLIB_CLHEP_HOME}/include:${CPATH}
@@ -25,8 +28,8 @@ pushd $JUNOTOP >& /dev/null
         source setup.sh
         popd >& /dev/null
     fi
-    if [ -f "sniper/SniperRelease/cmt/setup.sh" ]; then
-        pushd sniper/SniperRelease/cmt/ >& /dev/null
+    if [ -f "cmt4sniper/SniperRelease/cmt/setup.sh" ]; then
+        pushd cmt4sniper/SniperRelease/cmt/ >& /dev/null
         source setup.sh
         popd >& /dev/null
     fi

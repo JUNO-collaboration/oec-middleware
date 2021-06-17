@@ -2,7 +2,7 @@
 #define CPP_SNIPER_4_LOEC_H
 
 #include "OEC_com/oec_com/EventDepository.h"
-#include <boost/python.hpp>
+//#include <boost/python.hpp>
 #include <vector>
 #include <string>
 
@@ -25,7 +25,7 @@ class CppSniper4LOEC
         LOECInputSvc*  m_input;
         LOECOutputSvc* m_output;
 
-        boost::python::object m_pyTask;
+        //boost::python::object m_pyTask;
 
         static boost::mutex cppSniperMutex;
 

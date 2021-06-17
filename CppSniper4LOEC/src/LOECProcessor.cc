@@ -9,7 +9,7 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
 
     if (thrNum > 1) ROOT::EnableThreadSafety();
 
-    Py_Initialize();
+    //Py_Initialize();
     //PyEval_InitThreads();
     //PyEval_ReleaseLock();
     

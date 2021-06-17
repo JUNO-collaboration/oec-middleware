@@ -19,9 +19,7 @@ LOECEvtMemMgr::~LOECEvtMemMgr()
 
 bool LOECEvtMemMgr::initialize()
 {
-    Task* par = getParent();
-
-    SniperPtr<DataMemSvc> mSvc(*par, "DataMemSvc");
+    SniperPtr<DataMemSvc> mSvc(m_par, "DataMemSvc");
     mSvc->regist("/Event", new LOECNavBuf());
 
     return true;
