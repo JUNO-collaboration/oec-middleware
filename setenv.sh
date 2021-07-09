@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export JUNOTOP=/sharefs/bes/zoujh/juno/JunoOEC
-MyWorkArea=/sharefs/bes/zoujh/juno/JunoOEC
+export Middleware=`readlink -f ${BASH_SOURCE[0]} | xargs dirname`
+export JUNOTOP=`dirname ${Middleware}`
+MyWorkArea=`dirname ${Middleware}`
 source ${JUNOTOP}/oec-adaptor/setup.sh
 source ${JUNOTOP}/external/sniper/share/sniper/setup.sh
 source ${JUNOTOP}/CMT/v1r26/mgr/setup.sh
@@ -10,8 +11,8 @@ export SNIPER_INIT_FILE=${OFFLINE_DIR}/config/.init.json
 export CMTPROJECTPATH=${JUNOTOP}:${CMTPROJECTPATH}
 
 export JUNO_EXTLIB_Boost_HOME=${JUNOTOP}/external/installed
-export JUNO_EXTLIB_ROOT_HOME=${JUNOTOP}/external/installed/root6
-export BOOST_PYTHON_SUFFIX=""
+export JUNO_EXTLIB_ROOT_HOME=${JUNOTOP}/external/installed/root6-24
+export BOOST_PYTHON_SUFFIX="38"
 
 
 export JUNO_EXTLIB_CLHEP_HOME=${JUNOTOP}/external/offline

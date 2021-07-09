@@ -4,8 +4,8 @@
 #include "Event/OECHeader.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
-#include "OEC_com/oec_com/OEC_define.h"
 #include "SniperKernel/SniperLog.h"
+#include <iostream>
 DECLARE_SERVICE(LOECOutputSvc);
 
 LOECOutputSvc::LOECOutputSvc(const std::string& name)

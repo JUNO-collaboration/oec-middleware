@@ -3,6 +3,7 @@
 
 #include "SniperKernel/SvcBase.h"
 #include "OEC_com/oec_com/EventDepository.h"
+#include "OEC_com/oec_com/OEC_define.h"
 
 class LOECNavBuf;
 
@@ -28,6 +29,7 @@ class LOECOutputSvc : public SvcBase
         LOECNavBuf* m_buf;
         void*       m_cache;
         int         m_nInPack;
+        
 
         std::string m_type;
 };

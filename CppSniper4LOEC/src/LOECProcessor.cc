@@ -23,7 +23,7 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
         m_threads.push_back(new boost::thread(boost::bind(&LOECProcessor::thrdWork,this,i)));
     }
     //initFinalize(thrNum);
-    //sleep(300);
+   
     std::cout<<"********************* All threads has been created *******************"<<std::endl;
 }
 
@@ -51,7 +51,8 @@ void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
     }
     
     std::cout<<"****************All jobs has been finished******************"<<std::endl;
-    std::cout<<"****************        ps is done        ******************"<<std::endl;
+    //std::cout<<"****************        ps is done        ******************"<<std::endl;
+
     return;
 }
 
@@ -105,6 +106,6 @@ void LOECProcessor::initFinalize(int thrNum){
 extern "C" {
     oec::AlgInterface *create_processor()
     {
-        return new LOECProcessor(1);
+        return new LOECProcessor(2);
     }
 }

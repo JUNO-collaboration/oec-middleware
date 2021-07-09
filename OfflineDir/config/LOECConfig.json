@@ -28,21 +28,21 @@
       "identifier": "PMTParamSvc/PMTParamSvc",
       "properties": {
         "DBType": "File",
-        "Path": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/pmtdata.txt"
+        "Path": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/pmtdata.txt"
       }
     },
     {
       "identifier": "PMTCalibSvc/PMTCalibSvc",
       "properties": {
         "DBcur": 20201218,
-        "DirPath": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data",
+        "DirPath": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data",
         "ReadDB": 0
       }
     },
     {
       "identifier": "RootWriter/RootWriter",
       "properties": {
-        "Output": { "CALIBEVT": "test.root" }
+        "Output": { "USER_OUTPUT": "test.root" }
       }
     },
     {
@@ -55,7 +55,7 @@
       "identifier": "RecGeomSvc/RecGeomSvc",
       "properties": {
         "FastInit": true,
-        "GeomFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/sample_detsim.root",
+        "GeomFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/sample_detsim.root",
         "GeomPathInRoot": "JunoGeom",
         "InitCD": true,
         "InitTT": true,
@@ -68,15 +68,15 @@
     {
       "identifier": "OECTagSvc/OECTagSvc",
       "properties": {
-        "OECTagFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/tag.xml"
+        "OECTagFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
       }
     },
     {
       "identifier": "EvtConfigSvc/EvtConfigSvc",
       "properties": {
         "VarString": "",
-        "seqListFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/seq.xml",
-        "sigListFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/config/LOEC_sig.xml"
+        "seqListFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/seq.xml",
+        "sigListFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/LOEC_sig.xml"
       }
     }
   ],
@@ -85,9 +85,9 @@
       "identifier": "Deconvolution/Deconvolution",
       "properties": {
         "Calib": 0,
-        "CalibFile": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/SPE_v20.root",
+        "CalibFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/SPE_v20.root",
         "DBcur": 20201218,
-        "Filter": "/sharefs/bes/zoujh/juno/JunoOEC/oec-middleware/OfflineDir/data/filter3_m.root",
+        "Filter": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/filter3_m.root",
         "HitCounting": 0,
         "Length": 1250,
         "Para1": 110,
