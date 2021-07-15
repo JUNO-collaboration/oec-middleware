@@ -106,6 +106,6 @@ void LOECProcessor::initFinalize(int thrNum){
 extern "C" {
     oec::AlgInterface *create_processor()
     {
-        return new LOECProcessor(2);
+        return new LOECProcessor(1);
     }
 }

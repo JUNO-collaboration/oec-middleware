@@ -78,7 +78,13 @@ bool LOECInputSvc::getWaveform(oec::simpleBuffer& wfEvt)
     int headerSize = addr[1]/4;  //in words
     int totalSize = addr[3]/4;   //in words
 
-    nav->setTimeStamp(TTimeStamp(addr[8], addr[7]));
+    //FIXME: this is a patch, because the quantity of ns from TF exceeds 1s, and exceed the limit signed_int which is the formal parameter of TimeStamp 
+    addr[8] += addr[7]/1000000000;
+    addr[7] %= 1000000000;
+
+    nav->setTimeStamp(TTimeStamp((time_t)addr[8], (Int_t)addr[7]));
+    //used to debug, print timeStamp
+    //LogInfo<<"**********************TimeStamp"<<nav->TimeStamp()<<std::endl;
     const_cast<JM::ElecFeeCrate&>(event->elecFeeCrate()).setTriggerTime(TimeStamp(addr[8], addr[7]));
     header->setEventID(addr[5]);
 
