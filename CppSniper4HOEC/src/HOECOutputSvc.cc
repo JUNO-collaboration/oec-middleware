@@ -1,8 +1,8 @@
 #include "HOECOutputSvc.h"
 #include "HOECNavBuf.h"
-#include "Event/OECHeader.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
+#include "TFile.h"
 
 DECLARE_SERVICE(HOECOutputSvc);
 
@@ -12,7 +12,7 @@ HOECOutputSvc::HOECOutputSvc(const std::string& name)
 }
 
 HOECOutputSvc::~HOECOutputSvc()
-{
+{   
 }
 
 bool HOECOutputSvc::initialize()
@@ -25,13 +25,27 @@ bool HOECOutputSvc::initialize()
 
     m_buf = buf.data();
 
-    LogInfo << "initialized successfully" << std::endl;
+    eventTree = new TTree("oecEvent", "info about oecEvent");
+    eventTree->Branch("l1id",&event.l1id,"l1id/i");
+    eventTree->Branch("eventID", &event.eventID, "eventID/I");
+    eventTree->Branch("tag", &event.tag, "tag/I");
+    eventTree->Branch("energy", &event.energy, "energy/F");
+    eventTree->Branch("vertexX", &event.vertexX, "vertexX/F");
+    eventTree->Branch("vertexY", &event.vertexY, "vertexY/F");
+    eventTree->Branch("vertexZ", &event.vertexZ, "vertexZ/F");
+
+    LogInfo << "HOECOutputSvc initialized successfully" << std::endl;
 
     return true;
 }
 
 bool HOECOutputSvc::finalize()
-{
+{   
+    LogInfo<<"********************Start the finalize() of HOECOutputSvc***********************"<<std::endl;
+    TFile* f = new TFile("oecEvent.root","recreate");
+    eventTree->Write();
+    f->Close();
+
     return true;
 }
 
@@ -55,5 +69,23 @@ bool HOECOutputSvc::put(uint32_t& l1id, uint32_t& tag)
     l1id = oecHeader->l1id();
     tag = oecEvent->getTag();
 
+    //FIXME: used to fill a tree to debug
+    fillEvent(oecHeader, oecEvent);
+
     return true;
+}
+
+//FIXME: used to fill a tree to debug
+void HOECOutputSvc::fillEvent(JM::OECHeader* oecHeader,JM::OECEvent* oecEvent){
+    event.l1id = oecHeader->l1id();
+    event.eventID =  oecHeader->EventID();
+    event.tag =  oecEvent->getTag();
+    event.energy = oecEvent->getEnergy();
+    event.vertexX = oecEvent->getVertexX();
+    event.vertexY = oecEvent->getVertexY();
+    event.vertexZ = oecEvent->getVertexZ();
+
+    eventTree->Fill();
+
+    return;
 }
