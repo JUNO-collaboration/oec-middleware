@@ -15,13 +15,15 @@
     {
       "identifier": "LOECInputSvc/InputSvc",
       "properties": {
-        "InputType": "Waveform"
+        "InputType": "Waveform",
+        "LogLevel": 2
       }
     },
     {
       "identifier": "LOECOutputSvc/OutputSvc",
       "properties": {
-        "OutputType": "QT"
+        "OutputType": "QT",
+        "LogLevel": 5
       }
     },
     {
@@ -86,7 +88,7 @@
       "properties": {
         "Calib": 0,
         "CalibFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/SPE_v20.root",
-        "DBcur": 20201218,
+        "DBcur": 20201219,
         "Filter": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/filter3_m.root",
         "HitCounting": 0,
         "Length": 1250,
@@ -97,13 +99,13 @@
         "Para5": 130,
         "Para6": 15,
         "ReadDB": 0,
-        "Threshold1": 0.025,
+        "Threshold1": 0.03,
         "Threshold2": 0.025,
         "TotalPMT": 17612,
         "WidthThreshold1": 12,
-        "WidthThreshold2": 12,
-        "Window1": 9,
-        "Window2": 9
+        "WidthThreshold2": 13,
+        "Window1": 8,
+        "Window2": 8
       }
     },
     {
