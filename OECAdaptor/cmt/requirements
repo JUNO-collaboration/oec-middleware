@@ -3,7 +3,11 @@ package OECAdaptor
 use SniperKernel   v*
 
 macro OECAdaptor_home "${JUNO_OECLIB_OECAdaptor_HOME}"
-macro OECAdaptor_linkopts "-L$(OECAdaptor_home)/installed/lib -loec_com"
+macro OECAdaptor_linkopts " -L$(OECAdaptor_home)/installed/lib -loec_com "
+macro_append OECAdaptor_linkopts " -L$(OECAdaptor_home)/installed/lib -ljuno_pack "
+#macro OECAdaptor_linkopts "-L$(OECAdaptor_home)/installed/lib -lyy"
 
 include_path none
 include_dirs $(OECAdaptor_home)/user/processor
+include_dirs $(OECAdaptor_home)/df/pack_plus
+include_dirs $(OECAdaptor_home)/df/oec_com/oec_com

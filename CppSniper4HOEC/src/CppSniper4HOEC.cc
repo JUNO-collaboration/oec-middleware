@@ -1,7 +1,7 @@
 #include "CppSniper/CppSniper4HOEC.h"
 #include "HOECInputSvc.h"
 #include "HOECOutputSvc.h"
-#include "OEC_com/oec_com/parse.h"
+#include "parse.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/Sniper.h"
 

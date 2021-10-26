@@ -7,6 +7,8 @@ source ${JUNOTOP}/oec-adaptor/setup.sh
 source ${JUNOTOP}/external/sniper/share/sniper/setup.sh
 source ${JUNOTOP}/CMT/v1r26/mgr/setup.sh
 
+ 
+ 
 export SNIPER_INIT_FILE=${OFFLINE_DIR}/config/.init.json
 export CMTPROJECTPATH=${JUNOTOP}:${CMTPROJECTPATH}
 

@@ -21,6 +21,7 @@ void HOECProcessor::oec_process(void* event, void* results)
     m_hoec->process(input, output);
 }
 
+
 extern "C" {
     oec::AlgInterface *create_processor()
     {

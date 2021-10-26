@@ -2,7 +2,7 @@
 #define HOEC_INPUT_SVC_H
 
 #include "SniperKernel/SvcBase.h"
-#include "OEC_com/oec_com/OEC_define.h"
+#include "OEC_define.h"
 
 class HOECNavBuf;
 
