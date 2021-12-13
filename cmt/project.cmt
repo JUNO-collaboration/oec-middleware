@@ -1,4 +1,0 @@
-project oec-middleware
-
-use offline
-use oec-prototype
