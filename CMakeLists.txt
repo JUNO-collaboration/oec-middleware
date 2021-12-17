@@ -4,10 +4,11 @@ project(oec-middleware)
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 
+set(Boost_PYTHON_VERSION "3.8")
 find_package(offline)
 include(PKG)
 
-find_package(Boost REQUIRED COMPONENTS python thread)
+find_package(Boost REQUIRED COMPONENTS python38 thread system filesystem)
 if (Boost_FOUND)
   message("Found Boost: ${Boost_LIBRARIES}")
 endif()
@@ -23,3 +24,4 @@ link_directories($ENV{JUNO_OECLIB_OECAdaptor_HOME}/installed/lib)
 
 
 add_subdirectory(CppSniper4LOEC)
+add_subdirectory(CppSniper4HOEC)
