@@ -2,7 +2,7 @@
 #define LOEC_INPUT_SVC_H
 
 #include "SniperKernel/SvcBase.h"
-#include "OEC_com/oec_com/EventDepository.h"
+#include <juno_pack/Event.h>
 
 class LOECNavBuf;
 
@@ -15,7 +15,7 @@ class LOECInputSvc : public SvcBase
 
         bool initialize();
         bool finalize();
-        bool getWaveform(oec::simpleBuffer& wfEvt);
+        bool getWaveform( junoread::Event& OnlineEvt);
     private :
 
         LOECNavBuf* m_buf;

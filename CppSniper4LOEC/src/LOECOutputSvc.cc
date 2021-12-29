@@ -6,6 +6,7 @@
 #include "SniperKernel/SvcFactory.h"
 #include "SniperKernel/SniperLog.h"
 #include <iostream>
+#include <juno_pack/OECRecEvt.h>
 DECLARE_SERVICE(LOECOutputSvc);
 
 LOECOutputSvc::LOECOutputSvc(const std::string& name)
@@ -44,8 +45,9 @@ bool LOECOutputSvc::finalize()
     return true;
 }
 
-bool LOECOutputSvc::putQT(oec::simpleBuffer& qtEvt)
-{
+
+
+bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     JM::EvtNavigator* nav = m_buf->curEvt();
     auto calibHeader = dynamic_cast<JM::CalibHeader*>(nav->getHeader("/Event/Calib"));
     if ( ! calibHeader ) {
@@ -53,10 +55,7 @@ bool LOECOutputSvc::putQT(oec::simpleBuffer& qtEvt)
         return false;
     }
     auto& calibCol = calibHeader->event()->calibPMTCol();
-    //int size = calibCol.size();
-    //std::cout << "zzz " << size << std::endl;
-
-    //set result to DAQ Buffer
+    
     static const int headerSize = 9;
     int size = headerSize;
     uint32_t* _cache = (uint32_t*)m_cache;
@@ -76,7 +75,7 @@ bool LOECOutputSvc::putQT(oec::simpleBuffer& qtEvt)
     //set the header
     int sizeInBytes = size*4;
     _cache[0] = 0xee1234ee;  //marker
-    _cache[1] = 36;  //HeaderSize
+    _cache[1] = 36;  //HeaderSize in Bytes
     _cache[2] = 0;  //
     _cache[3] = sizeInBytes;  //TotalSize in bytes
     _cache[4] = m_buf->l1id;  //l1id
@@ -86,17 +85,16 @@ bool LOECOutputSvc::putQT(oec::simpleBuffer& qtEvt)
     _cache[7] = time.GetNanoSec();  //NanoSec
     _cache[8] = time.GetSec();  //Sec
 
-    //set the DAQ Buffer
-    qtEvt.buffer_size = sizeInBytes;
-    
-    memcpy(qtEvt.ptr, _cache, sizeInBytes);
+    std::pair<uint8_t*, uint8_t*> tqInterval = onlineEvt.indexOf(junoread::Event::EventIndex::WAVEFORM_TQ);
+    assert(tqInterval.first + sizeInBytes < tqInterval.second);
 
-    
+    memcpy(tqInterval.first, _cache, sizeInBytes);
 
     return true;
 }
 
-bool LOECOutputSvc::putVertex(oec::simpleBuffer& vtxEvt)
+
+bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
 {
     //std::cout << "Try to get Navigator" << std::endl;
     JM::EvtNavigator* nav = m_buf->curEvt();
@@ -131,10 +129,10 @@ bool LOECOutputSvc::putVertex(oec::simpleBuffer& vtxEvt)
     _cache[3] = sizeof(oec::OECRecEvt);  //waveform vertex size in bytes
     _cache[4] = m_buf->l1id;  //l1id
 
-    //set the DAQ Buffer
-    vtxEvt.buffer_size = sizeInBytes;
+    std::pair<uint8_t*, uint8_t*> recResultInterval = onlineEvt.indexOf(junoread::Event::EventIndex::REC_RESULT);
+    assert(recResultInterval.first + sizeInBytes < recResultInterval.second);
     
-    memcpy(vtxEvt.ptr, _cache, sizeInBytes);
+    memcpy(recResultInterval.first, _cache, sizeInBytes);
 
     return true;
 }

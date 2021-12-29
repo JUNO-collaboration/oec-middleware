@@ -36,18 +36,26 @@ LOECProcessor::~LOECProcessor(){
     }
 }
 
-void LOECProcessor::oec_process(void* input, void* /*nullptr*/){
+void LOECProcessor::oec_process(void* vec_data, void* /*nullptr*/){
     jobDoneNum = 0;
-    std::vector<oec::EventDepository*>* evDepoes = reinterpret_cast<std::vector<oec::EventDepository*>*>(input);
-    jobQueue = *evDepoes;
-    workToBeDone.notify_all();
+    std::vector<void*>& events = *reinterpret_cast<std::vector<void*>*>(vec_data);
 
+    if(events.size() == 0){
+        return;
+    }
+
+    
+    for(void* evt : events){
+        jobQueue.push_back(evt);
+    }
+
+    workToBeDone.notify_all();
     
     while(true){
         //std::cout<<"Check if all jobs have been completed"<<std::endl;
         boost::mutex::scoped_lock lock(doneMutex);
         doneJob.wait(lock);
-        if(jobDoneNum == evDepoes->size()) break;
+        if(jobDoneNum == events.size()) break;
     }
     
     std::cout<<"****************All jobs has been finished******************"<<std::endl;
@@ -75,7 +83,7 @@ void LOECProcessor::thrdWork(int i){
     }    
 }
 
-oec::EventDepository* LOECProcessor::getJob(){
+void* LOECProcessor::getJob(){
     //std::cout<<"Try to get a job"<<std::endl;
     boost::mutex::scoped_lock lock(jobQueueMutex);
     while(true){
@@ -83,8 +91,8 @@ oec::EventDepository* LOECProcessor::getJob(){
         if(jobQueue.empty()) workToBeDone.wait(lock);
         else break;
     }
-    oec::EventDepository* job = jobQueue.back();
-    jobQueue.pop_back();
+    void* job = jobQueue.front();
+    jobQueue.pop_front();
     //std::cout<<"Got one job"<<std::endl;
     return job;
 }

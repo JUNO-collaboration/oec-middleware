@@ -1,13 +1,12 @@
 #ifndef LOEC_PROCESSOR_H
 #define LOEC_PROCESSOR_H
 
-#include "OEC_com/oec_com/EventDepository.h"
-#include "OEC_com/oec_com/AlgInterface.h"
+#include "oec_com/AlgInterface.h"
 #include "CppSniper/CppSniper4LOEC.h"
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
-#include <vector>
+#include <deque>
 #include <cstdint>
 
 
@@ -31,7 +30,7 @@ private:
     boost::condition checkInitialize;
     
 
-    std::vector<oec::EventDepository*> jobQueue;
+    std::deque<void*> jobQueue;
     boost::mutex jobQueueMutex;
     boost::condition workToBeDone;
     
@@ -42,7 +41,7 @@ private:
     
 
     void thrdWork(int);
-    oec::EventDepository* getJob();
+    void* getJob();
     void finishJob();
     void initFinalize(int thrNum);
 };

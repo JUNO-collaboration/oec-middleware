@@ -2,8 +2,8 @@
 #define LOEC_OUTPUT_SVC_H
 
 #include "SniperKernel/SvcBase.h"
-#include "OEC_com/oec_com/EventDepository.h"
-#include "OEC_com/oec_com/OEC_define.h"
+#include <juno_pack/Event.h>
+
 
 class LOECNavBuf;
 
@@ -16,8 +16,8 @@ class LOECOutputSvc : public SvcBase
 
         bool initialize();
         bool finalize();
-        bool putQT(oec::simpleBuffer& qtEvt);
-        bool putVertex(oec::simpleBuffer& vtxEvt);
+        bool putQT(junoread::Event& OnlineEvt);
+        bool putVertex(junoread::Event& OnlineEvt);
         void clear();
 
         int         m_totalInPack;

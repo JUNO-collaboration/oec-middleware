@@ -1,7 +1,7 @@
 #ifndef CPP_SNIPER_4_LOEC_H
 #define CPP_SNIPER_4_LOEC_H
 
-#include "OEC_com/oec_com/EventDepository.h"
+
 //#include <boost/python.hpp>
 #include <vector>
 #include <string>
@@ -18,7 +18,7 @@ class CppSniper4LOEC
         CppSniper4LOEC(const std::string& PyModule);
         virtual ~CppSniper4LOEC();
         void initialize();
-        virtual void process(oec::EventDepository* );
+        virtual void process(void*);
 
     private:
         Task* m_task;
