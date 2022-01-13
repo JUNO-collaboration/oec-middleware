@@ -1,6 +1,6 @@
 {
   "sniper": {
-    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so", "libPMTCalibSvc.so", "libDeconvolution.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtConfig.so", "libEvtAlgorithms.so", "libEvtSteering.so", "libSimpleRecAlg.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so" ],
+    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so", "libPMTCalibSvc.so", "libDeconvolution.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtSteering.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so" ],
     "LogLevel": 5
   },
   "identifier": "TopTask/WfTask0",
@@ -29,15 +29,14 @@
     {
       "identifier": "PMTParamSvc/PMTParamSvc",
       "properties": {
-        "DBType": "File",
-        "Path": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/pmtdata.txt"
+        "DBType": "File"
       }
     },
     {
       "identifier": "PMTCalibSvc/PMTCalibSvc",
       "properties": {
         "DBcur": 20201218,
-        "DirPath": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data",
+        "DirPath": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data",
         "ReadDB": 0
       }
     },
@@ -57,7 +56,7 @@
       "identifier": "RecGeomSvc/RecGeomSvc",
       "properties": {
         "FastInit": true,
-        "GeomFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/sample_detsim.root",
+        "GeomFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/sample_detsim.root",
         "GeomPathInRoot": "JunoGeom",
         "InitCD": true,
         "InitTT": true,
@@ -70,15 +69,7 @@
     {
       "identifier": "OECTagSvc/OECTagSvc",
       "properties": {
-        "OECTagFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
-      }
-    },
-    {
-      "identifier": "EvtConfigSvc/EvtConfigSvc",
-      "properties": {
-        "VarString": "",
-        "seqListFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/seq.xml",
-        "sigListFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/LOEC_sig.xml"
+        "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
       }
     }
   ],
@@ -87,9 +78,9 @@
       "identifier": "Deconvolution/Deconvolution",
       "properties": {
         "Calib": 0,
-        "CalibFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/SPE_v20.root",
+        "CalibFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/SPE_v20.root",
         "DBcur": 20201219,
-        "Filter": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/data/filter3_m.root",
+        "Filter": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/filter3_m.root",
         "HitCounting": 0,
         "Length": 1250,
         "Para1": 110,

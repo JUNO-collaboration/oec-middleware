@@ -33,8 +33,5 @@ source ${JUNO_EXTLIB_Xercesc_HOME}/bashrc
 if [ -d "${MyWorkArea}/oec-adaptor" ]; then
     export JUNO_OECLIB_OECAdaptor_HOME=${MyWorkArea}/oec-adaptor
 fi
-if [ "${MyWorkArea}" != "${JUNOTOP}" ]; then
-    export CMTPROJECTPATH=${MyWorkArea}:${CMTPROJECTPATH}
-fi
 
 

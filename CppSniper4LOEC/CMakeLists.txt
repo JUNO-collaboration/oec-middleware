@@ -14,7 +14,7 @@ PKG(CppSniper4LOEC
         #offline::EvtConfig
         )
 
-#target_link_libraries(CppSniper4LOEC oec_com)
+target_link_libraries(CppSniper4LOEC oec_com)
 target_link_libraries(CppSniper4LOEC juno_pack)
 target_link_libraries(CppSniper4LOEC pthread)
 #target_link_libraries(CppSniper4LOEC xerces-c)

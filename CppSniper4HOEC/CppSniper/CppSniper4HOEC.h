@@ -1,8 +1,8 @@
 #ifndef CPP_SNIPER_4_HOEC_H
 #define CPP_SNIPER_4_HOEC_H
 
-#include "EventDepository.h"
-#include "OEC_define.h"
+#include "OEC_com/oec_com/EventDepository.h"
+#include "OEC_com/oec_com/OEC_define.h"
 //#include <boost/python.hpp>
 #include <deque>
 #include <string>

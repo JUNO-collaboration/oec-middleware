@@ -1,7 +1,7 @@
 #ifndef HOEC_PROCESSOR_H
 #define HOEC_PROCESSOR_H
 
-#include "AlgInterface.h"
+#include "OEC_com/oec_com/AlgInterface.h"
 #include <cstdint>
 #include <list>
 #include <mutex>

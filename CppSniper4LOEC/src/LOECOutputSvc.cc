@@ -6,7 +6,7 @@
 #include "SniperKernel/SvcFactory.h"
 #include "SniperKernel/SniperLog.h"
 #include <iostream>
-#include <juno_pack/OECRecEvt.h>
+#include "oec_com/OEC_define.h"
 DECLARE_SERVICE(LOECOutputSvc);
 
 LOECOutputSvc::LOECOutputSvc(const std::string& name)
