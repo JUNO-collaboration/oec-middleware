@@ -8,8 +8,8 @@
 #include <iostream>
 
 int CppSniper4LOEC::waveTaskNum = 0;
-boost::mutex CppSniper4LOEC::cppSniperMutex;
-CppSniper4LOEC::CppSniper4LOEC(const std::string& PyModule = "LOECWaveformRec")
+
+CppSniper4LOEC::CppSniper4LOEC()
 {   
     LogInfo << "To get Cpp task" << std::endl;
 
@@ -36,19 +36,17 @@ void CppSniper4LOEC:: initialize(){
 }
 
 void CppSniper4LOEC:: process(void* evtBufPtr)
-{   junoread::Event event(reinterpret_cast<uint8_t*>(evtBufPtr));
+{   
+    
+    junoread::Event event(reinterpret_cast<uint8_t*>(evtBufPtr));
     
     m_input->getWaveform(event);
-
-    //std::cout<<" rec start"<<std::endl;
+   
     m_task->Snoopy().run_once();
-    //std::cout<<" rec end"<<std::endl;
-    
-    //std::cout<<" Put QT"<<std::endl;
-    m_output->putQT(event);
 
-    //std::cout<<" Put Vertex"<<std::endl;
+    m_output->putQT(event);
     m_output->putVertex(event);
+    
     std::cout<<"data has been sent to oec"<<std::endl;
     
     m_output->clear();

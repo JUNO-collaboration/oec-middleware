@@ -5,3 +5,13 @@ export OFFLINE_DIR=`readlink -f ${BASH_SOURCE[0]} | xargs dirname`
 export LD_LIBRARY_PATH=${OFFLINE_DIR}/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=${OFFLINE_DIR}/config:${OFFLINE_DIR}/python:$PYTHONPATH
 export SNIPER_INIT_FILE=${OFFLINE_DIR}/config/.init.json
+
+if [[ -z "${JUNOTOP}" ]];
+then 
+    export JUNOTOP=$OFFLINE_DIR
+fi
+
+if [[ -z "${JUNO_GEOMETRY_PATH}" ]];###########Fix me::  RecGeomSvc从这里取配置文件
+then 
+    export JUNO_GEOMETRY_PATH=/home/yangyx/OEC_project/offline/Detector/Geometry
+fi

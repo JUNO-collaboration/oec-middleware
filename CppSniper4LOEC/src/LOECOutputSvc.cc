@@ -86,9 +86,15 @@ bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     _cache[8] = time.GetSec();  //Sec
 
     std::pair<uint8_t*, uint8_t*> tqInterval = onlineEvt.indexOf(junoread::Event::EventIndex::WAVEFORM_TQ);
-    assert(tqInterval.first + sizeInBytes < tqInterval.second);
 
-    memcpy(tqInterval.first, _cache, sizeInBytes);
+    assert(tqInterval.second - tqInterval.first == 12);//前4Bytes存放channelTag（用于标识是tq），后8个Byte是指针，指向存TQ的内存（大小~1M）
+    uint32_t TQtag = *reinterpret_cast<uint32_t*>(tqInterval.first);
+    assert((TQtag >> 16) == static_cast<uint32_t>(junoread::data_type::WAVE_CONSTRUCTED_TQ));
+    assert((TQtag & 0x0000ffff) == 0x0000fffe);
+    assert(sizeInBytes < 1000000);//daq提供的内存上限是1M
+
+    void* recTQresult = reinterpret_cast<void*>(*reinterpret_cast<uint64_t*>(tqInterval.first + 4));
+    memcpy(recTQresult, _cache, sizeInBytes);
 
     return true;
 }
@@ -130,9 +136,15 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     _cache[4] = m_buf->l1id;  //l1id
 
     std::pair<uint8_t*, uint8_t*> recResultInterval = onlineEvt.indexOf(junoread::Event::EventIndex::REC_RESULT);
-    assert(recResultInterval.first + sizeInBytes < recResultInterval.second);
     
-    memcpy(recResultInterval.first, _cache, sizeInBytes);
+    uint32_t recTag = *reinterpret_cast<uint32_t*>(recResultInterval.first);
+    assert((recResultInterval.second - recResultInterval.first) == 12);
+    assert((recTag >> 16) == static_cast<uint32_t>(junoread::data_type::REC_RESULT));
+    assert((recTag & 0x0000ffff) == 0x0000ffff);
+    assert(sizeInBytes < 1000000);//daq提供的内存上限是1M
+
+    void* recResult = reinterpret_cast<void*>(*reinterpret_cast<uint64_t*>(recResultInterval.first + 4));
+    memcpy(recResult, _cache, sizeInBytes);
 
     return true;
 }

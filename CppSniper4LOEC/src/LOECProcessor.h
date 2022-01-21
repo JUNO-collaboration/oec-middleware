@@ -3,15 +3,11 @@
 
 #include "oec_com/AlgInterface.h"
 #include "CppSniper/CppSniper4LOEC.h"
-#include <boost/thread/thread.hpp>
-#include <boost/thread/condition.hpp>
-#include <boost/thread/mutex.hpp>
+#include <thread>
+#include <condition_variable>
+#include <mutex>
 #include <deque>
 #include <cstdint>
-
-
-class EventDepository;
-class CppSniper4LOEC;
 
 class LOECProcessor: public oec::AlgInterface
 {
@@ -22,22 +18,22 @@ public:
     virtual void oec_process(void*, void*);
 
 private:
-    std::vector<boost::thread*> m_threads;
+    std::vector<std::thread*> m_threads;
     std::vector<CppSniper4LOEC*> m_cppSnps;
 
     int initialNum; 
-    boost::mutex initialMutex;
-    boost::condition checkInitialize;
+    std::mutex initialMutex;
+    std::condition_variable checkInitialize;
     
 
     std::deque<void*> jobQueue;
-    boost::mutex jobQueueMutex;
-    boost::condition workToBeDone;
+    std::mutex jobQueueMutex;
+    std::condition_variable workToBeDone;
     
 
     int jobDoneNum;
-    boost::mutex doneMutex; 
-    boost::condition doneJob;
+    std::mutex doneMutex; 
+    std::condition_variable doneJob;
     
 
     void thrdWork(int);

@@ -1,12 +1,12 @@
 {
   "sniper": {
-    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so", "libPMTCalibSvc.so", "libDeconvolution.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtSteering.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so" ],
-    "LogLevel": 5
+    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so", "libPMTCalibSvc.so", "libDeconvolution.so","libQCtrRecAlg.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtSteering.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so", "libSpmtElecConfigSvc.so","libRecTimeLikeAlg.so", "libOMILREC.so"],
+    "LogLevel": 3
   },
-  "identifier": "TopTask/WfTask0",
+  "identifier": "Task/WfTask0",
   "properties": {
     "EvtMax": -1,
-    "LogLevel": 5
+    "LogLevel": 2
   },
   "services": [
     {
@@ -23,40 +23,51 @@
       "identifier": "LOECOutputSvc/OutputSvc",
       "properties": {
         "OutputType": "QT",
-        "LogLevel": 5
+        "LogLevel": 3
       }
-    },
+    },  
     {
       "identifier": "PMTParamSvc/PMTParamSvc",
       "properties": {
-        "DBType": "File"
+        "DBType": "File",
+        "Path_CD_LPMT_Pos": "",
+        "Path_CD_LPMT_Type": "",
+        "Path_CD_SPMT_Pos": "",
+        "Path_CD_SPMT_Type": "",
+        "Path_WP_LPMT_Pos": "",
+        "Path_WP_LPMT_Type": ""
+      }
+    },
+    {
+      "identifier": "SpmtElecConfigSvc/SpmtElecConfigSvc",
+      "properties": {
+        "ConfigFile": "/junofs/users/huangx/newoffline/offline/Examples/TestSpmtElecAlg/share/SpmtElecConfig.txt",
+        "LogLevel": 4
       }
     },
     {
       "identifier": "PMTCalibSvc/PMTCalibSvc",
       "properties": {
-        "DBcur": 20201218,
-        "DirPath": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data",
+        "DBcur": 20201219,
+        "DirPath": "",
         "ReadDB": 0
       }
     },
     {
-      "identifier": "RootWriter/RootWriter",
+      "identifier": "CondDBSvc/CondDBSvc",
       "properties": {
-        "Output": { "USER_OUTPUT": "test.root" }
+        "GlobalTag": "gtname",
+        "RepoPriorities": {},
+        "RepoProxies": [],
+        "RepoTypes": { "frontier": "Frontier" },
+        "RepoURIs": { "frontier": "http://junodb1.ihep.ac.cn:8080/Frontier" }
       }
-    },
-    {
-      "identifier": "EvtStoreSvc/EvtStoreSvc"
-    },
-    {
-      "identifier": "EvtResultSvc/EvtResultSvc"
     },
     {
       "identifier": "RecGeomSvc/RecGeomSvc",
       "properties": {
         "FastInit": true,
-        "GeomFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/sample_detsim.root",
+        "GeomFile": "default",
         "GeomPathInRoot": "JunoGeom",
         "InitCD": true,
         "InitTT": true,
@@ -64,23 +75,46 @@
       }
     },
     {
-      "identifier": "JunoTimerSvc/JunoTimerSvc"
+      "identifier": "DataRegistritionSvc/DataRegistritionSvc",
+      "properties": {
+        "EventToPath": {}
+      }
+    },
+    {
+      "identifier": "RootWriter/RootWriter",
+      "properties": {
+        "Output": { "TIME_REC": "sample_oec_user.root", "USER_OUTPUT": "sample_oec_user.root" }
+      }
     },
     {
       "identifier": "OECTagSvc/OECTagSvc",
       "properties": {
-        "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
+        "OECTagFile": "/home/yangyx/OEC_project/offline/OEC/OECConfig/OECTagSvc/share/tag.xml"
       }
+    },
+    {
+      "identifier": "EvtStoreSvc/EvtStoreSvc"
+    },
+    {
+      "identifier": "JunoTimerSvc/JunoTimerSvc"
+    },
+    {
+      "identifier": "EvtResultSvc/EvtResultSvc"
     }
   ],
   "algorithms": [
     {
+      "identifier":"LOECPreparationAlg",
+      "properties":{}
+    },
+    {
       "identifier": "Deconvolution/Deconvolution",
       "properties": {
         "Calib": 0,
-        "CalibFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/SPE_v20.root",
+        "CalibFile": "",
         "DBcur": 20201219,
-        "Filter": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/filter3_m.root",
+        "DebugMode": 0,
+        "Filter": "",
         "HitCounting": 0,
         "Length": 1250,
         "Para1": 110,
@@ -94,45 +128,31 @@
         "Threshold2": 0.025,
         "TotalPMT": 17612,
         "WidthThreshold1": 12,
-        "WidthThreshold2": 13,
-        "Window1": 8,
+        "WidthThreshold2": 12,
+        "Window1": 7,
         "Window2": 8
       }
     },
+  
+
+
+
     {
-      "identifier": "StepHandler/StepHandler"
-    }
-  ],
-  "subtasks": [
-    {
-      "identifier": "Task/subTask_RecCdMuonAlg",
-      "properties": {
-        "EvtMax": -1
-      },
-      "services": [],
-      "algorithms": [
+      "identifier": "StepHandler/StepHandler",
+      "tools": [
         {
-          "identifier": "RecCdMuonAlg/RecCdMuonAlg",
+          "identifier": "StepDecision/StepDecision",
           "properties": {
-            "OutputPmtPos": false,
-            "Pmt20inchTimeReso": 8,
-            "Pmt3inchTimeReso": 1,
-            "RecTool": "SpmtMuonRecTool",
-            "Use20inchPMT": true,
-            "Use3inchPMT": true
-          },
-          "tools": [
-            {
-              "identifier": "SpmtMuonRecTool/SpmtMuonRecTool",
-              "properties": {
-                "DistanceCut": 7000,
-                "LogLevel": 5,
-                "MaxPoints": 7,
-                "NpmtCut": 1,
-                "PECut": 53
-              }
-            }
-          ]
+            "ConfigFile": "/home/yangyx/OEC_project/offline/OEC/EvtProcessor/EvtSteering/share/sig.json",
+            "IsEnabled": false
+          }
+        },
+        {
+          "identifier": "StepSequencer/StepSequencer",
+          "properties": {
+            "ConfigFile": "/home/yangyx/OEC_project/offline/OEC/EvtProcessor/EvtSteering/share/seq_withrec.json",
+            "IsEnabled": false
+          }
         }
       ]
     }
