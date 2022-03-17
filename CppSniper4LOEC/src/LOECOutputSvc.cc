@@ -139,6 +139,7 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     uint32_t* _cache = (uint32_t*)m_cache;
     oec::OECRecEvt* _evt = (oec::OECRecEvt*)(_cache+size);
     _evt->marker = 0x12345678;
+    _evt->l1id = onlineEvt.l1id();
     _evt->evtId = oecHeader->EventID();
     const auto& time = nav->TimeStamp();
     _evt->sec = time.GetSec();

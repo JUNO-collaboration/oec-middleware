@@ -49,7 +49,7 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
 
     //convert DAQ OECRecEvt to offline OECEvent
     nav->setTimeStamp(TTimeStamp(evt->sec, evt->nanoSec));
-    header->setL1id(m_l1id);
+    header->setL1id(evt->l1id);
     header->setEventID(evt->evtId);
     event->setTime(TTimeStamp(evt->sec, evt->nanoSec));
     event->addTag(evt->tag);
@@ -57,6 +57,13 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
     event->setVertexX(evt->x);
     event->setVertexY(evt->y);
     event->setVertexZ(evt->z);
+    event->setMuInX(evt->muinx);
+    event->setMuInY(evt->muiny);
+    event->setMuInZ(evt->muinz);
+    event->setMuOutX(evt->muoutx);
+    event->setMuOutY(evt->muouty);
+    event->setMuOutZ(evt->muoutz);
+    event->setMuID(evt->muid);
 
     LogInfo << " L1ID: " << header->l1id()
         << " EventID: " << header->EventID()

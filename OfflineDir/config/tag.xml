@@ -49,29 +49,37 @@
     <!--##########for correlated event tag############-->
     <label>
         <name>IBD</name>
-        <tag>0x10200400</tag>
+        <ptag>0x10200400</ptag>
+        <dtag>0x10200400</dtag>
     </label>
 
     <label>
         <name>BiPo</name>
-        <tag>0x10200200</tag>
+        <ptag>0x10200200</ptag>
+        <dtag>0x10200200</dtag>
     </label>
 
     <label>
         <name>ProtonDecay</name>
-        <tag>0x10200100</tag>
+        <ptag>0x10200100</ptag>
+        <dtag>0x10200100</dtag>
     </label>
 
     <label>
         <name>SpallationNeutron</name>
-        <tag>0x10400010</tag>
+        <ptag>0x10400010</ptag>
+        <dtag>0x10400010</dtag>
     </label>
+
     <label>
         <name>SpallationIsotope</name>
-        <tag>0x10400020</tag>
+        <ptag>0x10400020</ptag>
+        <dtag>0x10400020</dtag>
     </label>
+
     <label>
         <name>michelElec</name>
-        <tag>0x10400040</tag>
+        <ptag>0x10400040</ptag>
+        <dtag>0x10400040</dtag>
     </label>
 </labelList>

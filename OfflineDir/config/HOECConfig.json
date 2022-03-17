@@ -1,12 +1,11 @@
 {
   "sniper": {
     "LoadDlls": [ "libCppSniper4HOEC.so", "libOECTagSvc.so", "libOECConfigSvc.so", "libHECAlg.so" ],
-    "LogLevel": 5
+    "LogLevel": 2
   },
   "identifier": "Task/OECTask",
   "properties": {
-    "EvtMax": -1,
-    "LogLevel": 5
+    "EvtMax": -1
   },
   "services": [
     {
@@ -27,13 +26,13 @@
     {
       "identifier": "OECTagSvc/OECTagSvc",
       "properties": {
-        "OECTagFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
+        "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
       }
     },
     {
       "identifier": "OECConfigSvc/OECConfigSvc",
       "properties": {
-        "OECListFile": "/home/daq/yangyx/OEC_project/oec-middleware/OfflineDir/config/HOEC_sig.xml"
+        "OECListFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/HOEC_sig.xml"
       }
     }
   ],

@@ -106,7 +106,7 @@
             <max>1500000</max>
         </condition>
     </tag>
-    <tag tagname="SpallationIsotope">
+     <tag tagname="SpallationIsotope">
         <condition>
             <name>mu_denergy</name>
             <min>0.75</min>
@@ -123,7 +123,7 @@
             <max>1000000000</max>
         </condition>
     </tag>
-    <tag tagname="michelElec">
+     <tag tagname="michelElec">
         <condition>
             <name>denergy</name>
             <min>8</min>

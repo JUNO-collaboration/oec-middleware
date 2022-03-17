@@ -24,4 +24,4 @@ link_directories($ENV{JUNO_OECLIB_OECAdaptor_HOME}/installed/lib)
 
 
 add_subdirectory(CppSniper4LOEC)
-#add_subdirectory(CppSniper4HOEC)
+add_subdirectory(CppSniper4HOEC)
