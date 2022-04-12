@@ -2,7 +2,7 @@ PKG(CppSniper4LOEC
     DEPENDS
         Boost::system
         Boost::thread
-        Boost::python38
+        #Boost::python38
         offline::EvtNavigator
         offline::ElecEvent
         offline::CalibEvent

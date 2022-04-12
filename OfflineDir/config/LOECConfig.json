@@ -6,7 +6,7 @@
   "identifier": "Task/WfTask0",
   "properties": {
     "EvtMax": -1,
-    "LogLevel": 2
+    "LogLevel": 3
   },
   "services": [
     {
@@ -16,7 +16,7 @@
       "identifier": "LOECInputSvc/InputSvc",
       "properties": {
         "InputType": "Waveform",
-        "LogLevel": 2
+        "LogLevel": 3
       }
     },
     {
@@ -116,7 +116,7 @@
         "DebugMode": 0,
         "Filter": "",
         "HitCounting": 0,
-        "Length": 1250,
+        "Length": 1000,
         "Para1": 110,
         "Para2": 160,
         "Para3": 15,

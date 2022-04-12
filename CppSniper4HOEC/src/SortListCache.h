@@ -1,34 +1,37 @@
 #ifndef SORT_LIST_CACHE
 #define SORT_LIST_CACHE
 
-#include <list>
+#include <deque>
 #include <mutex>
 #include <condition_variable>
-#include "juno_pack/Event.h"
+#include "oec_com/OEC_define.h"
 #include <thread>
+#include <vector>
+#include <queue>
 
+class OECRecEvtCmp{
+public:
+    bool operator()(oec::OECRecEvt* a, oec::OECRecEvt* b);
+};
 
 class SortListCache{
 public:
-    SortListCache(uint64_t cacheTime, float dispRate);//指定缓存多长时间的事例，每次派发的事例占缓存的比例
+    SortListCache(uint64_t cacheTime = 1, uint32_t cacheNumb = 5);//指定最大缓存多长时间，最大缓存数量
     ~SortListCache();
     
-    void push_back(junoread::Event* const &);
-    void enqueue(std::list<junoread::Event*>& input);
-    void disptch(std::list<junoread::Event*>& output);
+    void enqueue(const std::vector<oec::OECRecEvt*>& input);
+    oec::OECRecEvt* get_evt();//注意，如果没有事例可以获得，返回一个nullptr
     
 private:
-    uint64_t m_cacheTime; 
-    float m_dispRate;
+    uint64_t m_cacheTime;//单位是秒
+    uint64_t m_maximTime;//单位是秒
+    uint32_t m_cacheNumb;
 
-    std::list<junoread::Event*> m_recvList;
-    std::list<junoread::Event*> m_sortList;
-    std::list<junoread::Event*> m_dispList;
+    std::deque<oec::OECRecEvt*>                       m_recvList;
+    std::priority_queue<oec::OECRecEvt*, std::deque<oec::OECRecEvt*>, OECRecEvtCmp> m_sortList;
+    std::deque<oec::OECRecEvt*>                       m_dispList;
     
-    //以下部件服务于m_sortList
-    std::list<junoread::Event*>::iterator m_splicePoint; //标记切割点的iterator
-    uint32_t m_spliceCount;//表示切割点距离头的距离
-    uint32_t m_sortListLen;//记录整个m_sortlist的长度
+    
 
     std::mutex m_rMutex;
     std::mutex m_dMutex;
@@ -41,12 +44,6 @@ private:
     void thread_work();
     void en_sortList();//将m_recvList中的事例转移到m_sortList中排序
     void en_dispList();
-
-    //在en_sortList()中被调用
-    void get_re_List(std::list<junoread::Event*>& list);//获取m_recvList, 暂存在list中
-    void insert_sort(std::list<junoread::Event*>& list);//将list有序插入到m_sortList中
-    static bool evt_tm_comp(junoread::Event*& a, junoread::Event*& b);//比较事例的时间先后，用于排序
-    void update_splicePoint(const std::list<junoread::Event*>::iterator& insertPoint);//根据插入点的位置更新切割点
     
     bool check_enDsp();
 };

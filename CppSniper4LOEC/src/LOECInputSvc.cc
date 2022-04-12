@@ -93,8 +93,13 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
         assert(*(dataPtr + dataSize - 1) == 0x0869);//校验波形最后末尾的uint16_t
 
         uint16_t* wfPtr = dataPtr + 8;//跳过前面8个uint16_t数，指向波形的第一个数字
-        size_t wfSizeReal = dataSize - 16 - 6; ///去除8个uint16_t的header和trailer，波形的长度, 为了对其原因，波形数据最后添了6个空位
-        assert(wfSizeReal == 1250);//离线要求接受的波形长度是1250ns
+        
+        // size_t wfSizeReal = dataSize - 16 - 6; ///去除8个uint16_t的header和trailer，波形的长度, 为了对其原因，波形数据最后添了6个空位
+        // assert(wfSizeReal == 1250);//离线要求接受的波形长度是1250
+        size_t wfSizeReal = dataSize - 16; //在线数据格式 没有最后添6个空位
+        assert(wfSizeReal == 1000 || wfSizeReal - 6 == 1250);//在线要求接受的波形长度是1000
+        
+        
         assert(*(wfPtr + dataSize -16) == 0x55aa);
 
         auto& adc = chMap[channelId].adc();
