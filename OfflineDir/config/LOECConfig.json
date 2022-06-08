@@ -83,7 +83,7 @@
     {
       "identifier": "RootWriter/RootWriter",
       "properties": {
-        "Output": { "TIME_REC": "sample_oec_user.root", "USER_OUTPUT": "sample_oec_user.root" }
+        "Output": { "TIME_REC": "/home/yangyx/runOutputData/sample_oec_user.root", "USER_OUTPUT": "/home/yangyx/runOutputData/sample_oec_user.root" }
       }
     },
     {
