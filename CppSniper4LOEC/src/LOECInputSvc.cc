@@ -61,16 +61,16 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
     m_buf->l1id = onlineEvt.l1id();
 
     //获取事例时间
-    uint64_t _evtTime = onlineEvt.evTime(); 
-    uint32_t* _timePtr = (uint32_t*)(&_evtTime);//用64位int存时间， 前面32位秒，后32位纳秒
-    assert(_timePtr[1] < 1000000000);//确保数据正确：纳秒数不超过1亿
-    nav->setTimeStamp(TTimeStamp((time_t)_timePtr[0], (Int_t)_timePtr[1])); 
+    uint64_t _evtTime = onlineEvt.evTime(); //uint64_t 存储的是一个ns数
+    time_t _second = (int)(_evtTime/1000000000);//获得秒数
+    Int_t _nanoSec = (int)(_evtTime%1000000000);//获得纳秒数
+    nav->setTimeStamp(TTimeStamp(_second, _nanoSec)); 
     //used to debug, print timeStamp
     //LogInfo<<"**********************TimeStamp"<<nav->TimeStamp()<<std::endl;
     
 
 
-    const_cast<JM::ElecFeeCrate&>(event->elecFeeCrate()).setTriggerTime(TimeStamp(_timePtr[0], _timePtr[1]));
+    const_cast<JM::ElecFeeCrate&>(event->elecFeeCrate()).setTriggerTime(TimeStamp(_second, _nanoSec));
     header->setEventID(onlineEvt.evId());
 
     //获取存储波形数据区间的头指针和尾后指针，区段内存放格式：4B ChannelTag 和 8B的数据指针 + 4B ChannelTag......
