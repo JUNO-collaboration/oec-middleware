@@ -1,22 +1,21 @@
 #include "CppSniper/CppSniper4HOEC.h"
 #include "HOECInputSvc.h"
 #include "HOECOutputSvc.h"
-
+#include "FragmentRingArray.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/Sniper.h"
 
 CppSniper4HOEC::CppSniper4HOEC(const std::string& PyModule)
-{   LogInfo<<__LINE__<<std::endl;
+{
     auto fcfg = std::string{getenv("OFFLINE_DIR")} + "/config/HOECConfig.json";
-    LogInfo<<__LINE__<<std::endl;
+
     auto jtask = Sniper::eval(fcfg.c_str());
-    LogInfo<<__LINE__<<std::endl;
+
     m_task = dynamic_cast<Task*>(jtask);
-    LogInfo<<__LINE__<<std::endl;
 
     m_task->Snoopy().config();
     m_task->Snoopy().initialize();
-    LogInfo<<__LINE__<<std::endl;
+    LogInfo<<"HOEC task is initialized"<<std::endl;
 
     m_input = dynamic_cast<HOECInputSvc*>(m_task->find("InputSvc"));
     m_output = dynamic_cast<HOECOutputSvc*>(m_task->find("OutputSvc"));
@@ -29,10 +28,10 @@ CppSniper4HOEC::~CppSniper4HOEC()
 }
 
 
-void CppSniper4HOEC::process(void* vertex_ofone_ev, void* output_vertex_ofone_ev)
+oec::OECRecEvt* CppSniper4HOEC::process(oec::OECRecEvt* vertex_ofone_ev)
 {   
     LogInfo<<"Hello this is es process(CppSniper4HOEC)."<<std::endl;
-    
+    oec::OECRecEvt* result = nullptr;
     oec::OECRecEvt* recEvt = reinterpret_cast<oec::OECRecEvt*>(vertex_ofone_ev);
     assert(recEvt->marker == 0x12345678);//检查是否拿到了LOEC写入的数据
     
@@ -43,8 +42,11 @@ void CppSniper4HOEC::process(void* vertex_ofone_ev, void* output_vertex_ofone_ev
         uint32_t _l1id = 0, _tag = 0;
         m_output->put(_l1id, _tag);
         m_recEvts.front()->tag = _tag;
-        m_recEvts.pop_front();//FIX ME：暂时先直接扔掉，应该作为结果返回给DAQ
-    }
+        result = &(*m_recEvts.front());//将结果传出去
+        m_recEvts.pop_front();
+    } 
+    return result;
+
 
 
     //旧的HOEC接口逻辑

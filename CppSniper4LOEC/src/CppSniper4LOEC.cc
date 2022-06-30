@@ -46,9 +46,7 @@ void CppSniper4LOEC:: process(void* evtBufPtr)
 
     m_output->putQT(event);
     m_output->putVertex(event);
-    
-    std::cout<<"data has been sent to oec"<<std::endl;
-    
+
     m_output->clear();
 }
 

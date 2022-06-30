@@ -16,7 +16,7 @@ class CppSniper4HOEC
         CppSniper4HOEC(const std::string& PyModule);
         virtual ~CppSniper4HOEC();
 
-        void process(void* vertex_ofone_ev, void* output_vertex_ofone_ev);
+        oec::OECRecEvt* process(oec::OECRecEvt* vertex_ofone_ev);
 
     private:
         Task* m_task;
@@ -26,6 +26,7 @@ class CppSniper4HOEC
         //boost::python::object m_pyTask;
 
         std::deque<oec::OECRecEvt*> m_recEvts;
+        
 
         //为了让处理完的事例以时间片为单位集中返还，而用到的数据结构
         //struct BufAndEvts {
