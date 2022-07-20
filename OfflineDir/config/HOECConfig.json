@@ -20,25 +20,39 @@
     {
       "identifier": "HOECOutputSvc/OutputSvc",
       "properties" : {
-        "LogLevel" : 5
+        "LogLevel" : 3
       }
     },
     {
       "identifier": "OECTagSvc/OECTagSvc",
       "properties": {
-        "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.xml"
+        "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.json",
+        "LogLevel" : 1
       }
     },
     {
       "identifier": "OECConfigSvc/OECConfigSvc",
       "properties": {
-        "OECListFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/HOEC_sig.xml"
+        "OECListFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/sig.json"
       }
     }
   ],
   "algorithms": [
     {
-      "identifier": "HECAlg/HECAlg"
+      "identifier": "HECAlg/HECAlg",
+      "properties": {
+        "maxN": 100,
+        "toolName": "HECDefaultTool"
+      },
+      "tools": [
+        {
+          "identifier": "HECDefaultTool/HECDefaultTool",
+          "properties": {
+            "TpostMuonVeto": 1.5e+06,
+            "TpreMuonVeto": 1000
+          }
+        }
+      ]
     }
   ]
 }

@@ -6,7 +6,7 @@ PKG(CppSniper4LOEC
         offline::EvtNavigator
         offline::ElecEvent
         offline::CalibEvent
-        offline::OECEvent
+        offline::OecEvent
         offline::Geometry
         offline::CondDB
         offline::BufferMemMgr

@@ -1,6 +1,6 @@
 #include "HOECNavBuf.h"
 #include "HOECInputSvc.h"
-#include "Event/OECHeader.h"
+#include "Event/OecHeader.h"
 #include "EvtNavigator/EvtNavigator.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
@@ -41,16 +41,16 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
     JM::EvtNavigator* nav = new JM::EvtNavigator();
     m_buf->set(nav);
 
-    JM::OECHeader* header = new JM::OECHeader();
-    nav->addHeader("/Event/OEC", header);
+    JM::OecHeader* header = new JM::OecHeader();
+    nav->addHeader("/Event/Oec", header);
 
-    JM::OECEvent* event = new JM::OECEvent();
+    JM::OecEvt* event = new JM::OecEvt();
     header->setEvent(event);
 
-    //convert DAQ OECRecEvt to offline OECEvent
+    //convert DAQ OECRecEvt to offline OecEvt
     nav->setTimeStamp(TTimeStamp((time_t)(evt->sec), (Int_t)(evt->nanoSec)));
     header->setL1id(evt->l1id);
-    header->setEventID(evt->evtId);
+    nav->setEventID(evt->evtId);
     event->setTime(TTimeStamp((time_t)(evt->sec), (Int_t)evt->nanoSec));
     event->addTag(evt->tag);
     event->setEnergy(evt->energy);
@@ -66,7 +66,7 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
     event->setMuID(evt->muid);
 
     LogInfo << " L1ID: " << header->l1id()
-        << " EventID: " << header->EventID()
+        << " EventID: " << nav->EventID()
         << " TAG: 0x" << std::hex << event->getTag() << std::dec
         << " time: " << nav->TimeStamp()
         << " energy: " << event->getEnergy()

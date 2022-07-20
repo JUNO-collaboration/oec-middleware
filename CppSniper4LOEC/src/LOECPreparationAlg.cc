@@ -1,7 +1,7 @@
 #include "SniperKernel/AlgBase.h"
 #include "EvtNavigator/NavBuffer.h"
-#include "Event/OECEvent.h"
-#include "Event/OECHeader.h"
+#include "Event/OecEvt.h"
+#include "Event/OecHeader.h"
 
 class LOECPreparationAlg : public AlgBase{
 public:    
@@ -43,11 +43,11 @@ bool LOECPreparationAlg::initialize(){
 
 bool LOECPreparationAlg::execute(){
     JM::NavBuffer::ElementPtr nav = *m_buf->current();
-    JM::OECEvent* thisEvent = new JM::OECEvent();
-    JM::OECHeader* thisHeader = new JM::OECHeader(); 
+    JM::OecEvt* thisEvent = new JM::OecEvt();
+    JM::OecHeader* thisHeader = new JM::OecHeader();
     thisEvent->setTime(nav->TimeStamp());
     thisHeader->setEvent(thisEvent);
-    nav->addHeader("/Event/OEC", thisHeader);
+    nav->addHeader("/Event/Oec", thisHeader);
     return true;
 }
 

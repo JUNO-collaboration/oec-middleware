@@ -1,7 +1,6 @@
 #include "LOECNavBuf.h"
 #include "LOECInputSvc.h"
-#include "Event/ElecHeader.h"
-#include "Event/CalibHeader.h"
+#include "Event/CdWaveformHeader.h"
 #include "EvtNavigator/EvtNavigator.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
@@ -45,18 +44,14 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
     //std::cout<<"Start get waveform "<<std::endl;
     JM::EvtNavigator* nav = new JM::EvtNavigator();
     m_buf->set(nav);
-    
-    
 
-    JM::ElecHeader* header = new JM::ElecHeader();
+    auto header = new JM::CdWaveformHeader();
     nav->addHeader(header);
 
-
-    JM::ElecEvent* event = new JM::ElecEvent();
+    auto event = new JM::CdWaveformEvt();
     header->setEvent(event);
 
     //event->setElecFeeCrate(JM::ElecFeeCrate());
-    auto& chMap = const_cast<std::map<int,JM::ElecFeeChannel>&>(event->elecFeeCrate().channelData());
 
     m_buf->l1id = onlineEvt.l1id();
 
@@ -68,10 +63,7 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
     //used to debug, print timeStamp
     //LogInfo<<"**********************TimeStamp"<<nav->TimeStamp()<<std::endl;
     
-
-
-    const_cast<JM::ElecFeeCrate&>(event->elecFeeCrate()).setTriggerTime(TimeStamp(_second, _nanoSec));
-    header->setEventID(onlineEvt.evId());
+    nav->setEventID(onlineEvt.evId());
 
     //获取存储波形数据区间的头指针和尾后指针，区段内存放格式：4B ChannelTag 和 8B的数据指针 + 4B ChannelTag......
     const std::pair<uint8_t*, uint8_t*> wfInterval = onlineEvt.indexOf(junoread::Event::EventIndex::WAVEFORM);
@@ -86,7 +78,6 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
         
         uint32_t channelId = 0x0000ffff & channelTag;
 
-        
         uint16_t* dataPtr = reinterpret_cast<uint16_t*>(*reinterpret_cast<uint64_t*>(channelPtr+4));//获取存放此通道波形内存块的指针，这块内存是按照16位存放的
         assert(*dataPtr == 0x805a);
         size_t dataSize = (junoread::ELEC_DATA_SIZE.at(junoread::data_type::WAVEFORME))/2;//一个通道的波形数据长度（存了多少个uint_16），包含header和trailer
@@ -98,22 +89,20 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
         // assert(wfSizeReal == 1250);//离线要求接受的波形长度是1250
         size_t wfSizeReal = dataSize - 16; //在线数据格式 没有最后添6个空位
         assert(wfSizeReal == 1000 || wfSizeReal - 6 == 1250);//在线要求接受的波形长度是1000
-        
-        
+
         assert(*(wfPtr + dataSize -16) == 0x55aa);
 
-        auto& adc = chMap[channelId].adc();
-        adc.clear();
-        adc.reserve(wfSizeReal);
+        auto _channel = new JM::ElecWaveform();
+        event->addChannel(channelId, _channel);
+        auto& charges = _channel->adc();
+        charges.reserve(wfSizeReal);
 
         //填入波形
         for(int i = 0; i < wfSizeReal; i++){
-            adc.push_back(wfPtr[i]);
+            charges.push_back(wfPtr[i]);
         }
-
         channelPtr += 12;//channel_tag 4B + pointer 8B
     }
-
     return true;
 }
 

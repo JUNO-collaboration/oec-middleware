@@ -3,7 +3,7 @@
 
 #include "SniperKernel/SvcBase.h"
 #include "TTree.h"
-#include "Event/OECHeader.h"
+#include "Event/OecHeader.h"
 
 class HOECNavBuf;
 
@@ -32,7 +32,7 @@ class HOECOutputSvc : public SvcBase
         EventFill event;
         
         //FIXME: used to fill a tree to debug
-        void fillEvent(JM::OECHeader* oecHeader,JM::OECEvent* oecEvent);
+        void fillEvent(JM::OecHeader* oecHeader,JM::OecEvt* oecEvent);
 
     private :
 

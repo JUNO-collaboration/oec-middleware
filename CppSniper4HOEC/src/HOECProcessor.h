@@ -32,9 +32,11 @@ private://成员变量的初始化顺序，依照此顺序
     //控制线程
     FragmentRingArray m_fragmentPool;
     FragmentRingArray::Iterator m_processPointer;
+    uint32_t m_processTimer;
+    uint32_t m_processPatience;
     FragmentRingArray::Iterator m_timeoutPointer;
     uint32_t m_currentTime;    //HOEC管理的时间片中 最新的时间
-    uint32_t m_timeoutPatience;
+    uint32_t m_timeoutPatience;//HOEC中能够容忍的最大停留时间
     std::thread* m_mainThread;//控制线程，控制HOEC的逻辑流程
     void mainThreadFunc();
     void handleExceptions(uint32_t l1id);
@@ -50,6 +52,7 @@ private://成员变量的初始化顺序，依照此顺序
     CppSniper4HOEC* m_hoec;   //for high level OEC in SNiPER
     std::thread* m_workerThread;
     void workerThreadFunc();
+    void showTagResult(HOECFragment* fragment);
 };
 
 

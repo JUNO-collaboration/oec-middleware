@@ -3,7 +3,7 @@ PKG(CppSniper4HOEC
         Boost::system
         #Boost::python38
         offline::EvtNavigator
-        offline::OECEvent
+        offline::OecEvent
         )
 
 

@@ -12,7 +12,8 @@ HOECProcessor::HOECProcessor():
 m_fragmentPool(10000),
 m_processPointer(m_fragmentPool),
 m_timeoutPointer(m_fragmentPool),
-m_timeoutPatience(5)
+m_timeoutPatience(10),
+m_processPatience(5)
 {   
     m_mainThread = new std::thread(&HOECProcessor::mainThreadFunc, this);
 
@@ -27,6 +28,9 @@ HOECProcessor::~HOECProcessor()
             LogInfo<<num<<"   "<<std::endl;
         }
 
+    m_mainThread->detach();
+    m_workerThread->detach();
+
     delete m_hoec;
 }
 
@@ -35,8 +39,6 @@ bool HOECProcessor:: put(const oec::EvsInTimeFragment& evtsPtr, oec::TimeoutInMs
 }
 
 bool HOECProcessor::get(oec::EvsInTimeFragment& evtsPtr, oec::TimeoutInMs timeout){
-    //debug:强行让等待时间变为5s
-    timeout = 5000;
     assert(evtsPtr.size() == 0);
     auto start = std::chrono::steady_clock::now();
     auto end = std::chrono::steady_clock::now();
@@ -55,7 +57,9 @@ bool HOECProcessor::get(oec::EvsInTimeFragment& evtsPtr, oec::TimeoutInMs timeou
             spend_time = std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
         }
     }
-    LogInfo<<"****************************DAQ get a fragment from LOEC************"<<evtsPtr.size()<<std::endl;
+    
+    if(flag)    
+        LogInfo<<"****************************DAQ get a fragment from HOEC************"<<evtsPtr.size()<<std::endl;
     return flag;
 }
 
@@ -127,8 +131,14 @@ void HOECProcessor::processFragment(){
         HOECFragment& currentFrag = *(m_processPointer);
         if(currentFrag.stat == HOECFragment::Status::ready){
             m_iWorkerQ.PutElement(&currentFrag);
+            m_processTimer = currentFrag.timeSec;
         }
         else{
+            if(m_currentTime - m_processTimer > m_processPatience ){//触发异常  
+                currentFrag.timeSec = m_processTimer;//To do: 触发异常，具体行为待完善
+                currentFrag.stat = HOECFragment::Status::late;
+                continue;
+            }
             break;
         }
         ++m_processPointer;
@@ -140,9 +150,16 @@ void HOECProcessor::processFragment(){
 void HOECProcessor::cleanTimeout(){
     while(true){
         HOECFragment& fragment = *(m_timeoutPointer);
-        if(m_currentTime - fragment.timeSec < m_timeoutPatience){
-             break;
+        if(fragment.stat != HOECFragment::Status::returned){
+            if(m_currentTime - fragment.timeSec < m_timeoutPatience)    break;//尚不需要被超时处理
+            
+            if(fragment.stat != HOECFragment::Status::late){//时间片已经到达 但是必须超时返回
+                //To do：将已经到达的时间片 打上保守的tag 返回
+                m_queOut.PutElement(*(fragment.evtsPtr));
+                fragment.stat = HOECFragment::Status::returned;
+            }
         }
+
         assert(fragment.stat == HOECFragment::Status::returned);
         fragment.evtsPtr = nullptr;
         fragment.stat = HOECFragment::Status::empty;
@@ -183,11 +200,19 @@ void HOECProcessor::workerThreadFunc(){
 
             fragments.front().second--;
             if(fragments.front().second == 0){
+                showTagResult(nullptr);//debug用， 打印HOEC处理结果
                 m_oWorkerQ.PutElement(fragments.front().first);
                 fragments.pop_front();
             }
         }  
     }    
+}
+
+void HOECProcessor::showTagResult(HOECFragment* fragment){
+    //LogInfo<<"The l1id of processed fragment"
+
+    return;
+
 }
 
 extern "C" {

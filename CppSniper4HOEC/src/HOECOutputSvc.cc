@@ -25,14 +25,14 @@ bool HOECOutputSvc::initialize()
 
     m_buf = buf.data();
 
-    eventTree = new TTree("oecEvent", "info about oecEvent");
-    eventTree->Branch("l1id",&event.l1id,"l1id/i");
-    eventTree->Branch("eventID", &event.eventID, "eventID/I");
-    eventTree->Branch("tag", &event.tag, "tag/I");
-    eventTree->Branch("energy", &event.energy, "energy/F");
-    eventTree->Branch("vertexX", &event.vertexX, "vertexX/F");
-    eventTree->Branch("vertexY", &event.vertexY, "vertexY/F");
-    eventTree->Branch("vertexZ", &event.vertexZ, "vertexZ/F");
+    //eventTree = new TTree("oecEvent", "info about oecEvent");
+    //eventTree->Branch("l1id",&event.l1id,"l1id/i");
+    //eventTree->Branch("eventID", &event.eventID, "eventID/I");
+    //eventTree->Branch("tag", &event.tag, "tag/I");
+    //eventTree->Branch("energy", &event.energy, "energy/F");
+    //eventTree->Branch("vertexX", &event.vertexX, "vertexX/F");
+    //eventTree->Branch("vertexY", &event.vertexY, "vertexY/F");
+    //eventTree->Branch("vertexZ", &event.vertexZ, "vertexZ/F");
 
     LogInfo << "HOECOutputSvc initialized successfully" << std::endl;
 
@@ -41,10 +41,10 @@ bool HOECOutputSvc::initialize()
 
 bool HOECOutputSvc::finalize()
 {   
-    LogInfo<<"********************Start the finalize() of HOECOutputSvc***********************"<<std::endl;
-    TFile* f = new TFile("oecEvent.root","recreate");
-    eventTree->Write();
-    f->Close();
+    //LogInfo<<"********************Start the finalize() of HOECOutputSvc***********************"<<std::endl;
+    //TFile* f = new TFile("oecEvent.root","recreate");
+    //eventTree->Write();
+    //f->Close();
 
     return true;
 }
@@ -52,11 +52,11 @@ bool HOECOutputSvc::finalize()
 bool HOECOutputSvc::put(uint32_t& l1id, uint32_t& tag)
 {
     JM::EvtNavigator* nav = m_buf->curEvt();
-    auto oecHeader = dynamic_cast<JM::OECHeader*>(nav->getHeader("/Event/OEC"));
-    auto oecEvent = (JM::OECEvent*)oecHeader->event("JM::OECEvent");
+    auto oecHeader = dynamic_cast<JM::OecHeader*>(nav->getHeader("/Event/Oec"));
+    auto oecEvent = (JM::OecEvt*)oecHeader->event("JM::OecEvt");
 
     LogInfo << " L1ID: " << oecHeader->l1id()
-        << " EventID: " << oecHeader->EventID()
+        << " EventID: " << nav->EventID()
         << " TAG: 0x" << std::hex << oecEvent->getTag() << std::dec
         //<< " time: " << nav->TimeStamp()
         << " energy: " << oecEvent->getEnergy()
@@ -70,15 +70,15 @@ bool HOECOutputSvc::put(uint32_t& l1id, uint32_t& tag)
     tag = oecEvent->getTag();
 
     //FIXME: used to fill a tree to debug
-    fillEvent(oecHeader, oecEvent);
+    //fillEvent(oecHeader, oecEvent);
 
     return true;
 }
 
 //FIXME: used to fill a tree to debug
-void HOECOutputSvc::fillEvent(JM::OECHeader* oecHeader,JM::OECEvent* oecEvent){
+void HOECOutputSvc::fillEvent(JM::OecHeader* oecHeader,JM::OecEvt* oecEvent){
     event.l1id = oecHeader->l1id();
-    event.eventID =  oecHeader->EventID();
+    //event.eventID =  oecHeader->EventID();
     event.tag =  oecEvent->getTag();
     event.energy = oecEvent->getEnergy();
     event.vertexX = oecEvent->getVertexX();

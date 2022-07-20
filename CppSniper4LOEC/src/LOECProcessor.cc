@@ -22,10 +22,11 @@ LOECProcessor::LOECProcessor(int thrNum = 1){
         LogInfo<<"Try to create a Thread"<<std::endl;
         
         m_cppSnps.push_back(new CppSniper4LOEC());
+        m_cppSnps[i]->initialize();
         m_threads.push_back(new std::thread(&LOECProcessor::thrdWork,this,i));
     }
     
-    initFinalize(thrNum);//用于同步：确认所有的工作线程都已初始化完毕
+    //initFinalize(thrNum);//用于同步：确认所有的工作线程都已初始化完毕
 
     m_mainThread = new std::thread(&LOECProcessor::mainThreadFunc, this);
 
@@ -46,10 +47,6 @@ bool LOECProcessor::put(const oec::EvsInTimeFragment& evs, oec::TimeoutInMs time
 }
 
 bool LOECProcessor::get(oec::EvsInTimeFragment& evs, oec::TimeoutInMs timeout){
-    //debug:强行让等待时间变为5s
-    timeout = 10000;
-
-
     assert(evs.size() == 0);
     auto start = std::chrono::steady_clock::now();
     auto end = std::chrono::steady_clock::now();
@@ -126,19 +123,17 @@ void LOECProcessor::mainThreadFunc(){
             break;
         }
     }
-
-    oec_process(nullptr, nullptr);
 }
 
 void LOECProcessor::thrdWork(int i){
     CppSniper4LOEC& m_rec = *m_cppSnps[i];
-    m_rec.initialize();
-    LogInfo<<"Initialize a CppSnipper"<<std::endl;
-    
-    initialMutex.lock();
-    initialNum++;
-    initialMutex.unlock();
-    checkInitialize.notify_one();
+    //m_rec.initialize();
+    //LogInfo<<"Initialize a CppSnipper"<<std::endl;
+    //
+    //initialMutex.lock();
+    //initialNum++;
+    //initialMutex.unlock();
+    //checkInitialize.notify_one();
     
     while(true){
         LogInfo<<__LINE__<<std::endl;

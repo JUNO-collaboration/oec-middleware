@@ -1,7 +1,7 @@
 #include "LOECNavBuf.h"
 #include "LOECOutputSvc.h"
-#include "Event/CalibHeader.h"
-#include "Event/OECHeader.h"
+#include "Event/CdLpmtCalibHeader.h"
+#include "Event/OecHeader.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
 #include "SniperKernel/SniperLog.h"
@@ -49,9 +49,9 @@ bool LOECOutputSvc::finalize()
 
 bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     JM::EvtNavigator* nav = m_buf->curEvt();
-    auto calibHeader = dynamic_cast<JM::CalibHeader*>(nav->getHeader("/Event/Calib"));
+    auto calibHeader = dynamic_cast<JM::CdLpmtCalibHeader*>(nav->getHeader("/Event/CdLpmtCalib"));
     if ( ! calibHeader ) {
-        LogFatal << "Failed to get CalibHeader" << std::endl;
+        LogFatal << "Failed to get CdLpmtCalibHeader" << std::endl;
         return false;
     }
     auto& calibCol = calibHeader->event()->calibPMTCol();
@@ -99,7 +99,7 @@ bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     _cache[2] = 0;  //
     _cache[3] = sizeInBytes;  //TotalSize in bytes
     _cache[4] = m_buf->l1id;  //l1id
-    _cache[5] = calibHeader->EventID();  //EventID
+    _cache[5] = nav->EventID();  //EventID
     _cache[6] = 0x00010003;  //TAG
     const auto& time = nav->TimeStamp();
     _cache[7] = time.GetNanoSec();  //NanoSec
@@ -110,7 +110,7 @@ bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     assert(tqInterval.second - tqInterval.first == 12);//前4Bytes存放channelTag（用于标识是tq），后8个Byte是指针，指向存TQ的内存（大小~1M）
     uint32_t TQtag = *reinterpret_cast<uint32_t*>(tqInterval.first);
     assert((TQtag >> 16) == static_cast<uint32_t>(junoread::data_type::WAVE_CONSTRUCTED_TQ));
-    assert((TQtag & 0x0000ffff) == 0x0000fffe);
+    assert((TQtag & 0x0000ffff) == 0x0000fffd);
     LogInfo<<"sizeInBytes  of TQ "<<sizeInBytes<<std::endl;
     assert(sizeInBytes < 1000000);//daq提供的内存上限是1M
 
@@ -126,12 +126,12 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     //std::cout << "Try to get Navigator" << std::endl;
     JM::EvtNavigator* nav = m_buf->curEvt();
     //std::cout << "Try to get Header" << std::endl;
-    auto oecHeader = dynamic_cast<JM::OECHeader*>(nav->getHeader("/Event/OEC"));
+    auto oecHeader = dynamic_cast<JM::OecHeader*>(nav->getHeader("/Event/Oec"));
     if ( ! oecHeader ) {
-        LogFatal << "Failed to get OECHeader" << std::endl;
+        LogFatal << "Failed to get OecHeader" << std::endl;
         return false;
     }
-    auto oecEvent = (JM::OECEvent*)oecHeader->event("JM::OECEvent");
+    auto oecEvent = (JM::OecEvt*)oecHeader->event("JM::OecEvt");
 
     //set result to DAQ Buffer
     static const int headerSize = 0;//重建的顶点结果不要header
@@ -140,7 +140,7 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     oec::OECRecEvt* _evt = (oec::OECRecEvt*)(_cache+size);
     _evt->marker = 0x12345678;
     _evt->l1id = onlineEvt.l1id();
-    _evt->evtId = oecHeader->EventID();
+    _evt->evtId = nav->EventID();
     const auto& time = nav->TimeStamp();
     _evt->sec = time.GetSec();
     _evt->nanoSec = time.GetNanoSec();

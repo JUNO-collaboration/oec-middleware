@@ -29,13 +29,13 @@ CppSniper4HOEC::~CppSniper4HOEC()
 
 
 oec::OECRecEvt* CppSniper4HOEC::process(oec::OECRecEvt* vertex_ofone_ev)
-{   
+{   //这一层不考虑时间片，每调用一次就会将一个事例放入task，没有处理结果时返回nullptr
     LogInfo<<"Hello this is es process(CppSniper4HOEC)."<<std::endl;
     oec::OECRecEvt* result = nullptr;
     oec::OECRecEvt* recEvt = reinterpret_cast<oec::OECRecEvt*>(vertex_ofone_ev);
     assert(recEvt->marker == 0x12345678);//检查是否拿到了LOEC写入的数据
     
-    m_recEvts.push_back(recEvt);
+    m_recEvts.push_back(recEvt);//用于记录滞留于 hoec task的events
     m_input->get(recEvt);
     while(m_input->next()){
         m_task->Snoopy().run_once();
