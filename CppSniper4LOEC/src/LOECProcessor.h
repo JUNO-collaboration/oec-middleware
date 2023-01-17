@@ -9,6 +9,8 @@
 #include <deque>
 #include <cstdint>
 #include "oec_com/QueueForOEC.h"
+#include "MiddlewareConfigSvc/MiddlewareConfigSvc.h"
+#include "SniperKernel/Task.h"
 
 class LOECProcessor: public oec::AlgInterfaceAsync
 {
@@ -20,6 +22,9 @@ public:
     bool virtual get(oec::EvsInTimeFragment&, oec::TimeoutInMs = 1000) override;
 
 private:
+    MiddlewareConfigSvc* m_configSvc;
+    Task* m_configTask;
+
     std::thread* m_mainThread;
     virtual void oec_process(void*, void*);
     void mainThreadFunc();
@@ -29,7 +34,6 @@ private:
     std::vector<std::thread*> m_threads;
     std::vector<CppSniper4LOEC*> m_cppSnps;
 
-    int initialNum; 
     std::mutex initialMutex;
     std::condition_variable checkInitialize;
     

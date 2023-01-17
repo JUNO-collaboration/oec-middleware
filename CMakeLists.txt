@@ -5,7 +5,7 @@ project(oec-middleware)
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 
 set(Boost_PYTHON_VERSION "3.8")
-find_package(offline)
+find_package(junosw)
 include(PKG)
 
 find_package(Boost REQUIRED COMPONENTS python38 thread system filesystem)
@@ -26,3 +26,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-needed -Wall -ggdb -Og -g")
 
 add_subdirectory(CppSniper4LOEC)
 add_subdirectory(CppSniper4HOEC)
+add_subdirectory(MiddlewareConfigSvc)

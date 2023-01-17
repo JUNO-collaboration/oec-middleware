@@ -112,7 +112,7 @@ bool LOECOutputSvc::putQT(junoread::Event& onlineEvt){
     assert((TQtag >> 16) == static_cast<uint32_t>(junoread::data_type::WAVE_CONSTRUCTED_TQ));
     assert((TQtag & 0x0000ffff) == 0x0000fffd);
     LogInfo<<"sizeInBytes  of TQ "<<sizeInBytes<<std::endl;
-    assert(sizeInBytes < 1000000);//daq提供的内存上限是1M
+    assert(sizeInBytes < 6000000);//daq提供的内存上限是1M
 
     void* recTQresult = reinterpret_cast<void*>(*reinterpret_cast<uint64_t*>(tqInterval.first + 4));
     memcpy(recTQresult, _cache, sizeInBytes);
@@ -150,10 +150,11 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     _evt->x = oecEvent->getVertexX();
     _evt->y = oecEvent->getVertexY();
     _evt->z = oecEvent->getVertexZ();
-    _evt->muinx = oecEvent->getMuInX();
-    _evt->muiny = oecEvent->getMuInY();
-    _evt->muinz = oecEvent->getMuInZ();
-    _evt->muid  = oecEvent->getMuID();
+    //FixME: muon的顶点可能又多个，新的OECEvt中存放的是一个vector
+    //_evt->muinx = oecEvent->getMuInX();
+    //_evt->muiny = oecEvent->getMuInY();
+    //_evt->muinz = oecEvent->getMuInZ();
+    //_evt->muid  = oecEvent->getMuID();
 
     int sizeInBytes = size*4 +sizeof(oec::OECRecEvt);//把 header拿到结构体部
     //_cache[0] = 0x12345678;  //marker

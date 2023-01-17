@@ -47,6 +47,12 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
     JM::OecEvt* event = new JM::OecEvt();
     header->setEvent(event);
 
+    //for test:delete later
+    assert(evt->marker == 0x12345678);
+    std::cout<<"evt amrker "<<hex<<evt->marker<<std::endl;
+    std::cout<<"The secod is "<<evt->sec<<" nano second is "<<evt->nanoSec<<std::endl;
+    
+
     //convert DAQ OECRecEvt to offline OecEvt
     nav->setTimeStamp(TTimeStamp((time_t)(evt->sec), (Int_t)(evt->nanoSec)));
     header->setL1id(evt->l1id);
@@ -57,13 +63,14 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
     event->setVertexX(evt->x);
     event->setVertexY(evt->y);
     event->setVertexZ(evt->z);
-    event->setMuInX(evt->muinx);
-    event->setMuInY(evt->muiny);
-    event->setMuInZ(evt->muinz);
-    event->setMuOutX(evt->muoutx);
-    event->setMuOutY(evt->muouty);
-    event->setMuOutZ(evt->muoutz);
-    event->setMuID(evt->muid);
+    //FixMe:用来转移OECEvt的接口需要重新定义 以承接新的OECEvt内容
+    //event->setMuInX(evt->muinx);
+    //event->setMuInY(evt->muiny);
+    //event->setMuInZ(evt->muinz);
+    //event->setMuOutX(evt->muoutx);
+    //event->setMuOutY(evt->muouty);
+    //event->setMuOutZ(evt->muoutz);
+    //event->setMuID(evt->muid);
 
     LogInfo << " L1ID: " << header->l1id()
         << " EventID: " << nav->EventID()

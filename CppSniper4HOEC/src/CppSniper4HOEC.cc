@@ -35,6 +35,19 @@ oec::OECRecEvt* CppSniper4HOEC::process(oec::OECRecEvt* vertex_ofone_ev)
     oec::OECRecEvt* recEvt = reinterpret_cast<oec::OECRecEvt*>(vertex_ofone_ev);
     assert(recEvt->marker == 0x12345678);//检查是否拿到了LOEC写入的数据
     
+    //For debug:检查接收进来的事例的时间是否正确
+    static uint32_t s_localSec = 0;
+    static uint32_t s_localNanoSec = 0;
+    if(s_localSec < recEvt->sec);
+    else if(s_localSec > recEvt->sec || (s_localSec == recEvt->sec && s_localNanoSec > recEvt->nanoSec)){
+        LogError<<"Fatal Error: the HOEC task get the wrong evet time "<<std::endl;
+        LogError<<"The Last event time: "<<s_localSec<<" "<<s_localNanoSec<<std::endl;
+        LogError<<"THe current event time: "<<recEvt->sec<<" "<<recEvt->nanoSec<<std::endl;
+        assert(false);
+    }
+    s_localSec = recEvt->sec;
+    s_localNanoSec = recEvt->nanoSec;
+
     m_recEvts.push_back(recEvt);//用于记录滞留于 hoec task的events
     m_input->get(recEvt);
     while(m_input->next()){

@@ -32,10 +32,11 @@ private://成员变量的初始化顺序，依照此顺序
     //控制线程
     FragmentRingArray m_fragmentPool;
     FragmentRingArray::Iterator m_processPointer;
-    uint32_t m_processTimer;
+    uint32_t m_processTimer;//上一次处理事例的时间
     uint32_t m_processPatience;
     FragmentRingArray::Iterator m_timeoutPointer;
-    uint32_t m_currentTime;    //HOEC管理的时间片中 最新的时间
+    uint32_t m_newestTime;    //HOEC管理的时间片中 最新的时间
+    uint32_t m_cleanTimer;//上一次清理的时间
     uint32_t m_timeoutPatience;//HOEC中能够容忍的最大停留时间
     std::thread* m_mainThread;//控制线程，控制HOEC的逻辑流程
     void mainThreadFunc();
@@ -53,6 +54,8 @@ private://成员变量的初始化顺序，依照此顺序
     std::thread* m_workerThread;
     void workerThreadFunc();
     void showTagResult(HOECFragment* fragment);
+
+    //用于debug的记录
 };
 
 

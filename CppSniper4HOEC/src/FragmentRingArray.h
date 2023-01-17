@@ -9,6 +9,7 @@ class HOECFragment
     std::shared_ptr<std::vector<void*>> evtsPtr;
     uint32_t l1id;
     uint32_t timeSec;
+    uint32_t nanoSec;
     enum Status{
         empty,
         ready,
@@ -40,7 +41,7 @@ public:
     FragmentRingArray(int length = 10000);
     ~FragmentRingArray();
 
-    int insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t time);
+    int insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t timeSec, uint16_t nanoSec);
     bool cleanFrag(FragmentRingArray::Iterator it);
     HOECFragment& operator[](int locate);
 private:

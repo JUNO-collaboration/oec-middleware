@@ -34,13 +34,14 @@ FragmentRingArray::~FragmentRingArray()
     delete [] m_array;
 }
 
-int FragmentRingArray::insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t time){
+int FragmentRingArray::insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t timeSec, uint16_t nanoSec){
     int _locate = (int)(l1id % (uint32_t)m_arrayLen);
     HOECFragment& _frag = m_array[_locate];
     assert(_frag.stat == HOECFragment::Status::empty);
     _frag.evtsPtr = evtsPtr;
     _frag.l1id = l1id;
-    _frag.timeSec = time;
+    _frag.timeSec = timeSec;
+    _frag.nanoSec = nanoSec;
     _frag.stat = HOECFragment::Status::ready;
 
     return _locate;

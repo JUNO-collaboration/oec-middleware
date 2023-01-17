@@ -2,8 +2,8 @@ PKG(CppSniper4HOEC
     DEPENDS
         Boost::system
         #Boost::python38
-        offline::EvtNavigator
-        offline::OecEvent
+        junosw::EvtNavigator
+        junosw::OecEvent
         )
 
 

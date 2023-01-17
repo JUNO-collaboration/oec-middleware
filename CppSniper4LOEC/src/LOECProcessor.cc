@@ -1,6 +1,7 @@
 #include "LOECProcessor.h"
 #include "TROOT.h"
 #include <iostream>
+#include "SniperKernel/Sniper.h"
 #include "SniperKernel/SniperLog.h"
 #include <juno_pack/Event.h>//fixme：debug用，本不必依赖
 #include "oec_com/OEC_define.h"//fixme：debug用，本不必依赖
@@ -8,25 +9,33 @@
 LOECProcessor::LOECProcessor(int thrNum = 1){
     std::cout<<"Start multi-thread version"<<std::endl;
     LogInfo<<__LINE__<<std::endl;
-    initialNum = 0;
 
     ROOT::EnableThreadSafety();
 
     //Py_Initialize();
     //PyEval_InitThreads();
     //PyEval_ReleaseLock();
+
+    //读取配置
+    auto fcfg = std::string{getenv("OFFLINE_DIR")} + "/config/MiddlewareConfig.json";
+    auto jtask = Sniper::eval(fcfg.c_str());
+    m_configTask = dynamic_cast<Task*>(jtask);
+    m_configSvc = dynamic_cast<MiddlewareConfigSvc*>(m_configTask->find("MiddlewareConfigSvc"));
+    thrNum = m_configSvc->getThrdNum();
     
     m_threads.reserve(thrNum);
     m_cppSnps.reserve(thrNum);
     for(int i = 0;i < thrNum; i++){
-        LogInfo<<"Try to create a Thread"<<std::endl;
-        
+        std::cout<<"*****************************Try to create a worker task "<<i<<"/"<<thrNum<<std::endl;
         m_cppSnps.push_back(new CppSniper4LOEC());
+        std::cout<<"******************************Try to initialize worker task"<<i<<"/"<<thrNum<<std::endl;
         m_cppSnps[i]->initialize();
+        //m_threads.push_back(new std::thread(&LOECProcessor::thrdWork,this,i));
+    }
+    for(int i = 0; i < thrNum; i++){
+        std::cout<<"*****************************Try to create a Thread "<<i<<"/"<<thrNum<<std::endl;
         m_threads.push_back(new std::thread(&LOECProcessor::thrdWork,this,i));
     }
-    
-    //initFinalize(thrNum);//用于同步：确认所有的工作线程都已初始化完毕
 
     m_mainThread = new std::thread(&LOECProcessor::mainThreadFunc, this);
 
@@ -77,7 +86,6 @@ void LOECProcessor::oec_process(void* fragment, void* /*nullptr*/){
         jobDoneNum = 0;
     }
     oec::EvsInTimeFragment events = *((oec::EvsInTimeFragment*)fragment);
-    LogInfo<<__LINE__<<std::endl;
     if(events.size() == 0){
         LogInfo<<"Error, there is no events in the fragment"<<std::endl;
         return;
@@ -87,13 +95,13 @@ void LOECProcessor::oec_process(void* fragment, void* /*nullptr*/){
         m_jobQueue.PutElement(evt);
     }
 
-    LogInfo<<__LINE__<<std::endl;
+
     {//确认时间片内的所有的事例都处理完毕
         std::unique_lock<std::mutex> lock(doneMutex);
         doneJob.wait(lock, [this, events]{return jobDoneNum == (int)events.size();});
         LogInfo<<"****************All events in fragment is processed"<<std::endl;
     }
-    LogInfo<<__LINE__<<std::endl;
+
     {//debug
         LogInfo<<"*****************The fragment size is "<<events.size()<<std::endl;
         junoread::Event _event(reinterpret_cast<uint8_t*>(events[events.size() - 1]));
@@ -131,7 +139,6 @@ void LOECProcessor::thrdWork(int i){
     //LogInfo<<"Initialize a CppSnipper"<<std::endl;
     //
     //initialMutex.lock();
-    //initialNum++;
     //initialMutex.unlock();
     //checkInitialize.notify_one();
     
@@ -142,6 +149,7 @@ void LOECProcessor::thrdWork(int i){
             LogInfo<<"queue is waked up. One thread destroyed"<<std::endl;
             break;
         }
+        LogInfo<<__LINE__<<std::endl;
         m_rec.process(event);
 
         finishJob();
@@ -152,15 +160,6 @@ void LOECProcessor::finishJob(){
     std::unique_lock<std::mutex> lock(doneMutex);
     jobDoneNum++;
     doneJob.notify_one();
-}
-
-void LOECProcessor::initFinalize(int thrNum){    //FIX ME
-    while(true){
-        LogInfo<<__LINE__<<std::endl;
-        std::unique_lock<std::mutex> lock(initialMutex);
-        if(initialNum == thrNum) break;
-        checkInitialize.wait(lock);
-    }
 }
 
 extern "C" {

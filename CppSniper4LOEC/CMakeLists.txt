@@ -3,15 +3,16 @@ PKG(CppSniper4LOEC
         Boost::system
         #Boost::thread
         #Boost::python38
-        offline::EvtNavigator
-        offline::ElecEvent
-        offline::CalibEvent
-        offline::OecEvent
-        offline::Geometry
-        offline::CondDB
-        offline::BufferMemMgr
-        #offline::OECTagSvc
-        #offline::EvtConfig
+        junosw::EvtNavigator
+        junosw::ElecEvent
+        junosw::CalibEvent
+        junosw::OecEvent
+        junosw::Geometry
+        junosw::CondDB
+        junosw::BufferMemMgr
+        MiddlewareConfigSvc
+        #junosw::OECTagSvc
+        #junosw::EvtConfig
         )
 
 target_link_libraries(CppSniper4LOEC oec_com)

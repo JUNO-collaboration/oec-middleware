@@ -1,6 +1,6 @@
 {
   "sniper": {
-    "LoadDlls": [ "libCppSniper4HOEC.so", "libOECTagSvc.so", "libOECConfigSvc.so", "libHECAlg.so" ],
+    "LoadDlls": [ "libCppSniper4HOEC.so", "libOECTagSvc.so", "libOECConfigSvc.so", "libHECAlg.so", "libSniperProfilingLib.so" ],
     "LogLevel": 2
   },
   "identifier": "Task/OECTask",
@@ -31,9 +31,12 @@
       }
     },
     {
+      "identifier": "SniperProfiling/SniperProfiling"
+    },
+    {
       "identifier": "OECConfigSvc/OECConfigSvc",
       "properties": {
-        "OECListFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/sig.json"
+        "OECListFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/OECConfigSvc/sig.json"
       }
     }
   ],
@@ -41,15 +44,31 @@
     {
       "identifier": "HECAlg/HECAlg",
       "properties": {
-        "maxN": 100,
-        "toolName": "HECDefaultTool"
+        "toolName": [ "HECSingleTool", "HECDefaultTool", "HECMuonTool" ]
       },
       "tools": [
         {
           "identifier": "HECDefaultTool/HECDefaultTool",
           "properties": {
-            "TpostMuonVeto": 1.5e+06,
-            "TpreMuonVeto": 1000
+            "TpostMuonVeto": 7000,
+            "TpreMuonVeto": 0,
+            "dT": 2000000,
+            "maxN": 100
+          }
+        },
+        {
+          "identifier": "HECSingleTool/HECSingleTool",
+          "properties": {
+            "TpostMuonVeto": 7000,
+            "TpreMuonVeto": 0
+          }
+        },
+        {
+          "identifier": "HECMuonTool/HECMuonTool",
+          "properties": {
+            "TMuonWindow": 200,
+            "dT": 2000000,
+            "maxN": 100
           }
         }
       ]

@@ -1,63 +1,111 @@
 {
   "sniper": {
-    "LoadDlls": [ "libCppSniper4LOEC.so", "libGeometry.so","libSniperProfilingLib.so","libPMTCalibSvc.so", "libDeconvolution.so","libQCtrRecAlg.so", "libRootWriterLib.so", "libEvtStore.so", "libEvtResult.so", "libJunoTimer.so", "libOECTagSvc.so", "libEvtSteering.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libSpmtMuonRecTool.so", "libSpmtElecConfigSvc.so","libRecTimeLikeAlg.so", "libOMILREC.so"],
+    "LoadDlls": [ "libOECTagSvc.so", "libRootWriterLib.so", "libJunoTimer.so", "libOECProcessor.so", "libQCtrRecAlg.so", "libOMILREC.so", "libRecTimeLikeAlg.so", "libCLHEPDict.so", "libRecCdMuonAlg.so", "libCdLpmtQSpecMuonRecTool.so", "libRootIOSvc.so", "libBufferMemMgr.so", "libSniperProfilingLib.so", "libDBISvc.so", "libParaDB.so", "libGeometry.so", "libSpmtElecConfigSvc.so", "libPMTCalibSvc.so", "libCondDB.so", "libSPMTCalibAlg.so", "libWpPMTCalibAlg.so", "libOECWFrec.so", "libEvtStore.so", "libEvtSteering.so", "libOECConfigSvc.so", "libHECAlg.so" ],
     "LogLevel": 3,
+    "Colorful": 9,
+    "ShowTime": false,
     "SharedElems": [
       {
-        "identifier": "SharedElem<PMTParamSvc>/PMTParamSvc",
+        "identifier": "SharedElem<OECTagSvc>/OECTagSvc",
         "index": 0,
         "properties": {
-        "DBType": "File",
-        "Path_CD_LPMT_Pos": "",
-        "Path_CD_LPMT_Type": "",
-        "Path_CD_SPMT_Pos": "",
-        "Path_CD_SPMT_Type": "",
-        "Path_WP_LPMT_Pos": "",
-        "Path_WP_LPMT_Type": "",
-        "Ranges_PMT_Constructed": [],
-        "Ranges_PMT_Enabled": []
-      }
+          "OECTagFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/tag.json"
+        }
+      },
+      {
+        "identifier": "SharedElem<DBISvc>/DBISvc",
+        "index": 1,
+        "properties": {
+          "Clients": {
+            "conddb": [
+              "frontier_connection"
+            ],
+            "paradb": [
+              "frontier_connection"
+            ]
+          },
+          "Connections": {
+            "frontier_connection": {
+              "backend": "frontier",
+              "proxy": "http://junosquid01.ihep.ac.cn:3128",
+              "server": "http://junodb1.ihep.ac.cn:8000/Frontier"
+            }
+          }
+        }
+      },
+      {
+        "identifier": "SharedElem<ParaDBSvc>/ParaDBSvc",
+        "index": 2,
+        "properties": {
+          "ParaGTag": "J22.1.0",
+          "RepoNames": [
+            "DBParaRepo"
+          ],
+          "RepoTypes": [
+            "DBI"
+          ]
+        }
+      },
+      {
+        "identifier": "SharedElem<PMTParamSvc>/PMTParamSvc",
+        "index": 3,
+        "properties": {
+          "DBType": "File",
+          "Path_CD_LPMT_Pos": "",
+          "Path_CD_LPMT_Type": "",
+          "Path_CD_SPMT_Pos": "",
+          "Path_CD_SPMT_Type": "",
+          "Path_WP_LPMT_Pos": "",
+          "Path_WP_LPMT_Type": "",
+          "Ranges_PMT_Constructed": [],
+          "Ranges_PMT_Enabled": []
+        }
       },
       {
         "identifier": "SharedElem<SpmtElecConfigSvc>/SpmtElecConfigSvc",
-        "index": 1,
+        "index": 4,
         "properties": {
-          "ConfigFile": "/home/yangyx/OEC_project/offline/Examples/TestSpmtElecAlg/share/SpmtElecConfig.txt",
-          "LogLevel": 3
+          "ConfigFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/SpmtElecConfig.txt",
+          "LogLevel": 5
         }
       },
       {
         "identifier": "SharedElem<PMTCalibSvc>/PMTCalibSvc",
-        "index": 2,
+        "index": 5,
         "properties": {
-          "DBcur": 20201219,
+          "DBcur": 20220704,
           "DirPath": "",
           "ReadDB": 0
         }
       },
       {
         "identifier": "SharedElem<CondDBSvc>/CondDBSvc",
-        "index": 3,
+        "index": 6,
         "properties": {
-          "GlobalTag": "gtname",
+          "GlobalTag": "J22.1.0",
           "RepoPriorities": {},
           "RepoProxies": [],
-          "RepoTypes": { "frontier": "Frontier" },
-          "RepoURIs": { "frontier": "http://junodb1.ihep.ac.cn:8080/Frontier" }
+          "RepoTypes": {
+            "dbi": "DBI"
+          },
+          "RepoURIs": {
+            "dbi": "dbi://conddb"
+          }
         }
       },
       {
         "identifier": "SharedElem<RecGeomSvc>/RecGeomSvc",
-        "index": 4,
+        "index": 7,
         "properties": {
           "FastInit": true,
           "GeomFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/data/Detector/Geometry/share/JunoGeom.root",
           "GeomPathInRoot": "JunoGeom",
           "InitCD": true,
           "InitTT": true,
-          "InitWP": true
+          "InitWP": true,
+          "Verbose": 0
         }
-      } 
+      }
     ]
   },
   "identifier": "Task/WfTask0",
@@ -73,50 +121,42 @@
       "identifier": "LOECInputSvc/InputSvc",
       "properties": {
         "InputType": "Waveform",
-        "LogLevel": 3
+        "LogLevel": 5
       }
     },
     {
       "identifier": "LOECOutputSvc/OutputSvc",
       "properties": {
         "OutputType": "QT",
-        "LogLevel": 3
+        "LogLevel": 5
       }
     },
     {
       "identifier": "SniperProfiling/SniperProfiling"
     },
     {
-      "identifier": "[0]:SharedElem<PMTParamSvc>/PMTParamSvc"
+      "identifier": "[0]:SharedElem<OECTagSvc>/OECTagSvc"
     },
     {
-      "identifier": "[1]:SharedElem<SpmtElecConfigSvc>/SpmtElecConfigSvc"
+      "identifier": "[1]:SharedElem<DBISvc>/DBISvc"
     },
     {
-      "identifier": "PMTCalibSvc/PMTCalibSvc",
-        "properties": {
-          "DBcur": 20201219,
-          "DirPath": "",
-          "ReadDB": 0
-        }
+      "identifier": "[2]:SharedElem<ParaDBSvc>/ParaDBSvc"
     },
     {
-      "identifier": "[3]:SharedElem<CondDBSvc>/CondDBSvc"
+      "identifier": "[3]:SharedElem<PMTParamSvc>/PMTParamSvc"
     },
     {
-      "identifier": "[4]:SharedElem<RecGeomSvc>/RecGeomSvc"
+      "identifier": "[4]:SharedElem<SpmtElecConfigSvc>/SpmtElecConfigSvc"
     },
     {
-      "identifier": "RootWriter/RootWriter",
-      "properties": {
-        "Output": { "TIME_REC": "/home/yangyx/runOutputData/sample_oec_user.root", "USER_OUTPUT": "/home/yangyx/runOutputData/sample_oec_user.root" }
-      }
+      "identifier": "[5]:SharedElem<PMTCalibSvc>/PMTCalibSvc"
     },
     {
-      "identifier": "OECTagSvc/OECTagSvc",
-      "properties": {
-        "OECTagFile": "/home/yangyx/OEC_project/offline/OEC/OECConfig/OECTagSvc/share/tag.json"
-      }
+      "identifier": "[6]:SharedElem<CondDBSvc>/CondDBSvc"
+    },
+    {
+      "identifier": "[7]:SharedElem<RecGeomSvc>/RecGeomSvc"
     },
     {
       "identifier": "EvtStoreSvc/EvtStoreSvc"
@@ -131,31 +171,33 @@
       "properties":{}
     },
     {
-      "identifier": "Deconvolution/Deconvolution",
+      "identifier": "SPMTCalibAlg/SPMTCalibAlg"
+    },
+    {
+      "identifier": "WpPMTCalibAlg/WpPMTCalibAlg"
+    },
+    {
+      "identifier": "OECWFrec/OECWFrec",
       "properties": {
-        "Calib": 0,
-        "CalibFile": "",
+        "BSL_method": "3TW",
         "Calib_Length": 1000,
-        "Calib_Start_Time": 100,
-        "DBcur": 20201219,
-        "DebugMode": 0,
-        "Filter": "",
-        "HitCounting": 0,
-        "Para1": 110,
-        "Para2": 160,
-        "Para3": 15,
-        "Para4": 80,
-        "Para5": 130,
-        "Para6": 15,
-        "ReadDB": 0,
-        "Threshold1": 0.03,
-        "Threshold2": 0.025,
+        "Calib_Start_Time": 300,
+        "Deconvolution_amp_threshold": [ 0.03, 0.025 ],
+        "Deconvolution_itg_width": [ 7, 8 ],
+        "Deconvolution_width_threshold": [ 12, 12 ],
+        "FHT_method": "SimpleIntegral",
+        "SimpleIntegral_amp_threshold": [ 2.9, 3.3 ],
+        "SimpleIntegral_itg_threshold": [ 0.084, 0.083 ],
+        "Steering_Cut": [ 26, 27 ],
+        "TTQ_method": "SimpleIntegral",
         "TotalPMT": 17612,
-        "WidthThreshold1": 12,
-        "WidthThreshold2": 12,
-        "Window1": 7,
-        "Window2": 8
+        "enableCalibCorr": true,
+        "enableFilter": false,
+        "enableSteering": true
       }
+    },
+    {
+      "identifier": "OECCreatorAlg/OECCreatorAlg"
     },
     {
       "identifier": "StepHandler/StepHandler",
@@ -163,14 +205,14 @@
         {
           "identifier": "StepSequencer/StepSequencer",
           "properties": {
-            "ConfigFile": "/home/yangyx/OEC_project/offline/OEC/EvtProcessor/EvtSteering/share/seq_withrec.json",
+            "ConfigFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/seq_withrec.json",
             "IsEnabled": false
           }
         },
         {
           "identifier": "StepDecision/StepDecision",
           "properties": {
-            "ConfigFile": "/home/yangyx/OEC_project/offline/OEC/EvtProcessor/EvtSteering/share/sig.json",
+            "ConfigFile": "/home/yangyx/OEC_project/oec-middleware/OfflineDir/config/EvtSteering/sig.json",
             "IsEnabled": false
           }
         }
