@@ -9,7 +9,7 @@
 #include <deque>
 
 HOECProcessor::HOECProcessor():
-m_fragmentPool(10000),
+m_fragmentPool(20000),
 m_processPointer(m_fragmentPool),
 m_timeoutPointer(m_fragmentPool),
 m_timeoutPatience(10),
@@ -30,6 +30,10 @@ HOECProcessor::~HOECProcessor()
 
     m_mainThread->detach();
     m_workerThread->detach();
+    //auto mainThreadID = m_mainThread->get_id();
+    //auto workerThreadID = m_workerThread->get_id();
+    //pthread_cancel(mainThreadID);
+    //pthread_cancel(workerThreadID);
 
     delete m_hoec;
 }
@@ -86,28 +90,38 @@ void HOECProcessor::mainThreadFunc(){
     m_queIn.GetElement(*evtsPtr);
     LogInfo<<"***************Receive the fragment from DAQ***********"<<std::endl;
     oec::OECRecEvt* _firstEvt = ((oec::OECRecEvt*)(*evtsPtr->begin()));
+    assert(_firstEvt->marker == 0x12345678);
     LogInfo<<"*************************The l1id is "<<_firstEvt->l1id<<"**************"<<std::endl;
     m_l1idOrder.push_back(_firstEvt->l1id);
-    m_currentTime = _firstEvt->sec;
-    m_fragmentPool.insertFrag(evtsPtr, _firstEvt->l1id, _firstEvt->sec);
+    m_newestTime = _firstEvt->sec;
+    m_fragmentPool.insertFrag(evtsPtr, _firstEvt->l1id, _firstEvt->sec, _firstEvt->nanoSec);
     m_processPointer.locate = _firstEvt->l1id % m_processPointer.arrayLen;//初始化m_processPointer
     m_timeoutPointer = m_processPointer;
+    m_cleanTimer = _firstEvt->sec;
     processFragment();
 
     while(true){
-        evtsPtr.reset(new oec::EvsInTimeFragment(10));//假设时间片内有 10个events,用于承接m_queIn中的数据
+        evtsPtr.reset(new oec::EvsInTimeFragment(15));//假设时间片内有 15个events,用于承接m_queIn中的数据
         if(!m_queIn.GetElement(*evtsPtr)){
             LogInfo<<"queue is waked up. The mainThread exit!"<<std::endl;
             break;
         }
-        LogInfo<<"****************** Got a fragment. events num in the fragment "<<(*evtsPtr).size()<<std::endl;
         
-        //To do: 判断时间片l1id是否不在可接受范围
         _firstEvt = ((oec::OECRecEvt*)(*evtsPtr->begin()));//此时间片内第一个事例的信息
-        LogInfo<<"*************************The l1id is "<<_firstEvt->l1id<<"**************"<<std::endl;
+        
+        //判断TF是否在可接受的范围内
+        if(_firstEvt->sec < (*m_timeoutPointer).timeSec || (_firstEvt->sec == (*m_timeoutPointer).timeSec && _firstEvt->nanoSec < (*m_timeoutPointer).nanoSec)){
+            LogInfo<<"The time of last cleaned: "<<(*m_timeoutPointer).timeSec<<" "<<(*m_timeoutPointer).nanoSec<<std::endl;
+            LogInfo<<"The time of newly accepted evt: "<<_firstEvt->sec<<" "<<_firstEvt->nanoSec<<std::endl;
+            LogError<<"Error: the received TF is not in the processing scope, Too old"<<std::endl;
+            continue;
+        }
+        
+        assert(_firstEvt->marker == 0x12345678);
+        LogInfo<<"*******************Mian thread insert one TF, TFid is "<<_firstEvt->l1id<<"**************"<<std::endl;
         m_l1idOrder.push_back(_firstEvt->l1id);
-        m_fragmentPool.insertFrag(evtsPtr, _firstEvt->l1id, _firstEvt->sec);
-        m_currentTime = std::max(m_currentTime, _firstEvt->sec);
+        m_fragmentPool.insertFrag(evtsPtr, _firstEvt->l1id, _firstEvt->sec, _firstEvt->nanoSec);
+        m_newestTime = std::max(m_newestTime, _firstEvt->sec);
 
         handleExceptions(_firstEvt->l1id);//新到的l1id 可能与异常有关
 
@@ -126,20 +140,29 @@ void HOECProcessor::handleExceptions(uint32_t l1id){
 }
 
 void HOECProcessor::processFragment(){
-    
+
     while(true){
         HOECFragment& currentFrag = *(m_processPointer);
         if(currentFrag.stat == HOECFragment::Status::ready){
+            currentFrag.stat = HOECFragment::Status::inWorker;
             m_iWorkerQ.PutElement(&currentFrag);
             m_processTimer = currentFrag.timeSec;
+
+        }
+        else if(currentFrag.stat == HOECFragment::Status::empty){//遇到一个空的,触发异常，或者等待下次
+            if(m_newestTime - m_processTimer > m_processPatience ){//触发异常  
+                currentFrag.timeSec = m_processTimer;//To do: 触发异常，具体行为待完善
+                LogInfo<<"Exception: Out of patience, trigger an exception"<<std::endl;
+                LogInfo<<"Exception TFid: "<<currentFrag.l1id<<" Locate: "<<m_processPointer.locate<<std::endl;
+                currentFrag.stat = HOECFragment::Status::late;
+            }
+            else    break;//等待下次
         }
         else{
-            if(m_currentTime - m_processTimer > m_processPatience ){//触发异常  
-                currentFrag.timeSec = m_processTimer;//To do: 触发异常，具体行为待完善
-                currentFrag.stat = HOECFragment::Status::late;
-                continue;
-            }
-            break;
+            LogError<<"Error processPointer is on an unexpected status  "<<currentFrag.stat<<std::endl;
+            LogInfo<<"The l1id is "<<currentFrag.l1id<<std::endl;
+            m_fragmentPool.snapShot();
+            assert(false);
         }
         ++m_processPointer;
     }
@@ -148,18 +171,38 @@ void HOECProcessor::processFragment(){
 }
 
 void HOECProcessor::cleanTimeout(){
-    while(true){
+//清理ring的逻辑
+//随着timeout Pointer的移动清理所有returned的frag，更新cleanTimer
+//遇到了未处理的frag，打上保守tag， 更新cleanTimer
+//遇到late frag 报一个warning
+
+    while(true){//此循环是为了腾空FragmentRingArray
         HOECFragment& fragment = *(m_timeoutPointer);
-        if(fragment.stat != HOECFragment::Status::returned){
-            if(m_currentTime - fragment.timeSec < m_timeoutPatience)    break;//尚不需要被超时处理
+
+        if(fragment.stat == HOECFragment::Status::returned){
+            m_cleanTimer = fragment.timeSec;//更新移除ring的frag的时间
+        }
+        else {//如果没有被返回，则可能面临超时
+            if(m_newestTime - m_cleanTimer < m_timeoutPatience)    break;//尚不需要被超时处理
             
-            if(fragment.stat != HOECFragment::Status::late){//时间片已经到达 但是必须超时返回
+            if(fragment.stat == HOECFragment::Status::ready){//时间片已经到达 但是必须超时返回
                 //To do：将已经到达的时间片 打上保守的tag 返回
+                m_cleanTimer = fragment.timeSec;
                 m_queOut.PutElement(*(fragment.evtsPtr));
                 fragment.stat = HOECFragment::Status::returned;
             }
+            else if(fragment.stat == HOECFragment::Status::late){//时间片直到超时也没有到达
+                LogFatal<<"Warning: clean one time out. The state is late. TFid: "<<fragment.l1id<<std::endl;
+                fragment.stat = HOECFragment::Status::returned;
+            }
+            else{
+                LogError<<"The timeoutPointer is on an unexpected status "<<fragment.stat<<std::endl;
+                m_fragmentPool.snapShot();
+                assert(false);
+            }
         }
 
+        LogInfo<<"one TF is cleaned from ring. TFid: "<<fragment.l1id<<" Locate: "<<m_timeoutPointer.locate<<std::endl;
         assert(fragment.stat == HOECFragment::Status::returned);
         fragment.evtsPtr = nullptr;
         fragment.stat = HOECFragment::Status::empty;
@@ -173,6 +216,7 @@ void HOECProcessor::return2DAQ(){
     while(true){
         if(!(m_oWorkerQ.TryGetElement(retFrag)))    break;
 
+        assert(retFrag->stat == HOECFragment::Status::inWorker);
         m_queOut.PutElement(*(retFrag->evtsPtr));//结果返回给DAQ
         retFrag->evtsPtr = nullptr;
         retFrag->stat = HOECFragment::Status::returned;
@@ -193,11 +237,17 @@ void HOECProcessor::workerThreadFunc(){
         assert(fragment != nullptr);
         fragments.push_back(std::make_pair(fragment, fragment->evtsPtr->size())); 
         
+        //LogInfo<<"********************WOrker get a TF*****************TFid "<<fragment->l1id<<std::endl;
+        for(auto evt : *(fragment->evtsPtr)){
+            oec::OECRecEvt* event = (oec::OECRecEvt*)evt;
+            //LogInfo<<"************Event time(put to hec task) "<<event->sec<<" "<<event->nanoSec<<std::endl;
+        }
+
         for(auto evt : *(fragment->evtsPtr)){
             if(m_hoec->process((oec::OECRecEvt*)evt) == nullptr){
                 continue;
             }
-
+            
             fragments.front().second--;
             if(fragments.front().second == 0){
                 showTagResult(nullptr);//debug用， 打印HOEC处理结果
@@ -210,9 +260,7 @@ void HOECProcessor::workerThreadFunc(){
 
 void HOECProcessor::showTagResult(HOECFragment* fragment){
     //LogInfo<<"The l1id of processed fragment"
-
     return;
-
 }
 
 extern "C" {

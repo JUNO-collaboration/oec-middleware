@@ -1,0 +1,177 @@
+[
+{
+    "signature_id": "EVtxRec",
+    "criterias": [
+    {
+        "behaviour": "accept",
+        "mark": "WPMuon",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 2,
+            "type": "TRUE"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "TTMuon",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 3,
+            "type": "TRUE"
+        }
+        ]
+    },
+    {
+        "behaviour": "jump",
+        "next": "MuonRec",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 20,
+            "type": "MIN"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "Single_SE",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 0.2,
+            "type": "MIN"
+        },
+        {
+            "name": "energy",
+            "value": 1,
+            "type": "MAX"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "Single_ME",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 1,
+            "type": "MIN"
+        },
+        {
+            "name": "energy",
+            "value": 3,
+            "type": "MAX"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "Single_LE",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 3,
+            "type": "MIN"
+        },
+        {
+            "name": "energy",
+            "value": 5,
+            "type": "MAX"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "Single_HE",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 5,
+            "type": "MIN"
+        },
+        {
+            "name": "energy",
+            "value": 20,
+            "type": "MAX"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "Single_unknow",
+        "items": [
+        {
+            "name": "detectorID",
+            "value": 1,
+            "type": "TRUE"
+        },
+        {
+            "name": "energy",
+            "value": 0,
+            "type": "MAX"
+        }
+        ]
+    }
+    ]
+},
+{
+    "signature_id": "MuonRec",
+    "criterias": [
+    {
+        "behaviour": "accept",
+        "mark": "CDMuon",
+        "items": [
+        {
+            "name": "energy",
+            "value": 20,
+            "type": "MIN"
+        },
+        {
+            "name": "energy",
+            "value": 10000,
+            "type": "MAX"
+        }
+        ]
+    },
+    {
+        "behaviour": "accept",
+        "mark": "ShowerMuon",
+        "items": [
+        {
+            "name": "energy",
+            "value": 10000,
+            "type": "MIN"
+        }
+        ]
+    }
+    ]
+}
+]

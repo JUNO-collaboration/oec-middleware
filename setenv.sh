@@ -5,7 +5,8 @@ export JUNOTOP=`dirname ${Middleware}`
 MyWorkArea=`dirname ${Middleware}`
 source ${JUNOTOP}/oec-adaptor/setup.sh
 source ${JUNOTOP}/sniper/InstallArea/share/sniper/setup.sh
-source ${JUNOTOP}/offline/InstallArea/setup.sh
+#source ${JUNOTOP}/offline/InstallArea/setup.sh
+source ${JUNOTOP}/junosw/InstallArea/setup.sh
 #source ${JUNOTOP}/CMT/v1r26/mgr/setup.sh
 
  
@@ -23,12 +24,15 @@ export JUNO_EXTLIB_CLHEP_HOME=${JUNOTOP}/external/CLHEP
 export JUNO_EXTLIB_frontier_HOME=${JUNOTOP}/external/frontier
 export JUNO_EXTLIB_pacparser_HOME=${JUNOTOP}/external/pacparser
 export JUNO_EXTLIB_Xercesc_HOME=${JUNOTOP}/external/xercesc
+export JUNO_EXTLIB_HepMC_HOME=${JUNOTOP}/external/HepMC
+export JUNO_EXTLIB_sqlite3_HOME=${JUNOTOP}/external/sqlite3
+
 
 source ${JUNO_EXTLIB_CLHEP_HOME}/bashrc
 source ${JUNO_EXTLIB_frontier_HOME}/bashrc
 source ${JUNO_EXTLIB_pacparser_HOME}/bashrc
 source ${JUNO_EXTLIB_Xercesc_HOME}/bashrc
-
+source ${JUNO_EXTLIB_sqlite3_HOME}/bashrc
 
 if [ -d "${MyWorkArea}/oec-adaptor" ]; then
     export JUNO_OECLIB_OECAdaptor_HOME=${MyWorkArea}/oec-adaptor

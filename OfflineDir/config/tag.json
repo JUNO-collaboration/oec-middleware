@@ -1,0 +1,106 @@
+[
+{
+    "name": "WPMuon",
+    "storeFormat": 0,
+    "tag": "0x20101000"
+},
+{
+    "name": "TTMuon",
+    "storeFormat": 0,
+    "tag": "0x30101000"
+},
+{
+    "name": "CDMuon",
+    "storeFormat": 0,
+    "tag": "0x11101000"
+},
+{
+    "name": "ShowerMuon",
+    "storeFormat": 1,
+    "tag": "0x18102000"
+},
+{
+    "name": "Atmo",
+    "storeFormat": 1,
+    "tag": "0x18220000"
+},
+{
+    "name": "AtmoFC",
+    "storeFormat": 1,
+    "tag": "0x18210000"
+},
+{
+    "name": "Single_SE",
+    "storeFormat": 0,
+    "tag": "0x10201000"
+},
+{
+    "name": "Single_ME",
+    "storeFormat": 0,
+    "tag": "0x10202000"
+},
+{
+    "name": "Single_ME_WF",
+    "storeFormat": 1,
+    "ptag": "0x18202000",
+    "dtag": "0x18202000"
+},
+{
+    "name": "Single_LE",
+    "storeFormat": 0,
+    "tag": "0x10204000"
+},
+{
+    "name": "Single_LE_WF",
+    "storeFormat": 1,
+    "ptag": "0x18204000",
+    "dtag": "0x18204000"
+},
+{
+    "name": "Single_HE",
+    "storeFormat": 0,
+    "tag": "0x10208000"
+},
+{
+    "name": "Single_HE_WF",
+    "storeFormat": 1,
+    "ptag": "0x18208000",
+    "dtag": "0x18208000"
+},
+{
+    "name": "Single_unknow",
+    "storeFormat": 0,
+    "tag": "0x00000000"
+},
+{
+    "name": "Correlation",
+    "storeFormat": 11,
+    "ptag": "0x1F200800",
+    "dtag": "0x1F200800"
+},
+{
+    "name": "SpallationNeutron_WF",
+    "storeFormat": 01,
+    "ptag": "0x11100100",
+    "dtag": "0x18400840"
+},
+{
+    "name": "MichelElectron_WF",
+    "storeFormat": 01,
+    "ptag": "0x11100100",
+    "dtag": "0x18400080"
+},
+{
+    "name": "SpallationNeutron",
+    "storeFormat": 00,
+    "ptag": "0x11100100",
+    "dtag": "0x10400840"
+},
+{
+    "name": "MichelElectron",
+    "storeFormat": 00,
+    "ptag": "0x11100100",
+    "dtag": "0x10400080"
+}
+
+]

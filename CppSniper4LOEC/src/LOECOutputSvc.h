@@ -6,6 +6,7 @@
 
 
 class LOECNavBuf;
+class RootOutputSvc;
 
 class LOECOutputSvc : public SvcBase
 {
@@ -23,15 +24,13 @@ class LOECOutputSvc : public SvcBase
         int         m_totalInPack;
 
     private :
-
-
-
         LOECNavBuf* m_buf;
         void*       m_cache;
         int         m_nInPack;
-        
-
+    
         std::string m_type;
+
+        RootOutputSvc* m_oSvc;
 };
 
 #endif

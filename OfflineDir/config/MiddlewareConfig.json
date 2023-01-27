@@ -1,0 +1,20 @@
+{
+    "sniper": {
+      "LoadDlls": ["libMiddlewareConfigSvc.so"],
+      "LogLevel": 3
+    },
+    "identifier": "Task/MiddlewareConfigTask",
+    "properties": {
+      "EvtMax": -1
+    },
+    "services": [
+      {
+        "identifier": "MiddlewareConfigSvc/MiddlewareConfigSvc",
+        "properties": {
+          "ThreadNum": 3
+        }
+      }
+    ],
+    "algorithms":[]
+  }
+  

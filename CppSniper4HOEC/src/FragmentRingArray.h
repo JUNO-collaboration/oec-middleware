@@ -44,6 +44,8 @@ public:
     int insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t timeSec, uint16_t nanoSec);
     bool cleanFrag(FragmentRingArray::Iterator it);
     HOECFragment& operator[](int locate);
+
+    void snapShot();
 private:
     HOECFragment* m_array;
     int m_arrayLen;

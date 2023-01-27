@@ -1,5 +1,6 @@
 #include "FragmentRingArray.h"
 #include <cassert>
+#include "SniperKernel/SniperLog.h"
 
 using namespace std;
 
@@ -37,7 +38,11 @@ FragmentRingArray::~FragmentRingArray()
 int FragmentRingArray::insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, uint32_t l1id, uint32_t timeSec, uint16_t nanoSec){
     int _locate = (int)(l1id % (uint32_t)m_arrayLen);
     HOECFragment& _frag = m_array[_locate];
-    assert(_frag.stat == HOECFragment::Status::empty);
+    if(_frag.stat != HOECFragment::Status::empty && _frag.stat != HOECFragment::Status::late){
+        LogError<<"failed to insert. the stat is "<<_frag.stat<<std::endl;
+        snapShot();
+        assert(_frag.stat == HOECFragment::Status::empty || _frag.stat == HOECFragment::Status::late);
+    }
     _frag.evtsPtr = evtsPtr;
     _frag.l1id = l1id;
     _frag.timeSec = timeSec;
@@ -59,7 +64,20 @@ HOECFragment& FragmentRingArray::operator[](int locate){
     return m_array[locate];
 }
 
+void FragmentRingArray::snapShot(){
+    LogError<<"Something unexpected happens. Here is the snapshot of FragmentRingArray"<<std::endl;
+    for(int i = 0; i < m_arrayLen; i++){
+        std::string stat = "unknow";
+        switch(m_array[i].stat){
+            case HOECFragment::Status::empty: stat = " empty";
+            case HOECFragment::Status::ready: stat = " ready";
+            case HOECFragment::Status::late: stat = " late";
+            case HOECFragment::Status::inWorker: stat = " inWorker";
+        }
 
+        LogError<<"Locate: "<<i<<" TFid: "<<m_array[i].l1id<<stat<<" "<<m_array[i].timeSec<<m_array[i].nanoSec<<std::endl;
+    }
+}
 
 
 

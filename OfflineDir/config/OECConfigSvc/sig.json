@@ -1,0 +1,169 @@
+[
+{
+    "tagname": "Single_ME_WF",
+    "conditions": [
+    {
+        "name": "R", 
+        "min": 0,
+        "max": 15000
+    },
+    {
+        "name": "singleType", 
+        "min": -0.5,
+        "max": 0.5
+    }
+    ]
+},
+{
+    "tagname": "Single_LE_WF",
+    "conditions": [
+    {
+        "name": "R", 
+        "min": 0,
+        "max": 17000
+    },
+    {
+        "name": "singleType", 
+        "min": 0.5,
+        "max": 1.5
+    }
+    ]
+},
+{
+    "tagname": "Single_HE_WF",
+    "conditions": [
+    {
+        "name": "R", 
+        "min": 0,
+        "max": 20000
+    },
+    {
+        "name": "singleType", 
+        "min": 1.5,
+        "max": 2.5
+    }
+    ]
+},
+{
+    "tagname": "Correlation",
+    "conditions": [
+    {
+        "name": "denergy", 
+        "min": 1,
+        "max": 12
+    },
+    {
+        "name": "penergy", 
+        "min": 0.5,
+        "max": 12
+    },
+    {
+        "name": "distance",
+        "min": 0,
+        "max": 3500
+    },
+    {
+        "name": "deltaT",
+        "min": 0,
+        "max": 2000000
+    }
+    ]
+},
+{
+    "tagname": "SpallationNeutron",
+    "conditions": [
+    {
+        "name": "denergy", 
+        "min": 1,
+        "max": 12
+    },
+    {
+        "name": "penergy", 
+        "min": 20
+    },
+    {
+        "name": "d2track",
+        "min": 0,
+        "max": 4000
+    },
+    {
+        "name": "deltaT",
+        "min": 0,
+        "max": 7000
+    }
+    ]
+},
+{
+    "tagname": "MichelElectron",
+    "conditions": [
+    {
+        "name": "denergy", 
+        "min": 12,
+        "max": 60
+    },
+    {
+        "name": "penergy", 
+        "min": 20
+    },
+    {
+        "name": "d2track",
+        "min": 0,
+        "max": 2000
+    },
+    {
+        "name": "deltaT",
+        "min": 0,
+        "max": 7000
+    }
+    ]
+},
+{
+    "tagname": "SpallationNeutron_WF",
+    "conditions": [
+    {
+        "name": "denergy", 
+        "min": 1,
+        "max": 12
+    },
+    {
+        "name": "penergy", 
+        "min": 20
+    },
+    {
+        "name": "d2track",
+        "min": 0,
+        "max": 4000
+    },
+    {
+        "name": "deltaT",
+        "min": 7000,
+        "max": 2000000
+    }
+    ]
+},
+{
+    "tagname": "MichelElectron_WF",
+    "conditions": [
+    {
+        "name": "denergy", 
+        "min": 12,
+        "max": 60
+    },
+    {
+        "name": "penergy", 
+        "min": 20
+    },
+    {
+        "name": "d2track",
+        "min": 0,
+        "max": 2000
+    },
+    {
+        "name": "deltaT",
+        "min": 7000,
+        "max": 20000
+    }
+    ]
+}
+
+]

@@ -18,15 +18,12 @@ LOECInputSvc::~LOECInputSvc()
 }
 
 bool LOECInputSvc::initialize()
-{
-    
-
+{  
     SniperDataPtr<LOECNavBuf> buf(getParent(), "/Event");
     if ( buf.invalid() ) {
         LogFatal << "Cannot find LOECNavBuf" << std::endl;
         return false;
     }
-
     m_buf = buf.data();
 
     LogInfo << "initialized successfully" << std::endl;
@@ -103,6 +100,7 @@ bool LOECInputSvc::getWaveform(junoread::Event& onlineEvt)
         }
         channelPtr += 12;//channel_tag 4B + pointer 8B
     }
+
     return true;
 }
 
