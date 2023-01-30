@@ -28,15 +28,15 @@ LOECOutputSvc::~LOECOutputSvc()
 
 bool LOECOutputSvc::initialize()
 {
-    ////用于和离线结果进行对比，将转换后的数据存下来
-    //SniperPtr<RootOutputSvc> oSvc(*m_par, "ValiOutputSvc");
-    //if ( oSvc.invalid() ) {
-    //    LogFatal << "cann't find OutputSvc for "
-    //             << m_par->scope() << m_par->objName() << std::endl;
-    //    throw SniperException("OutputSvc is invalid");
-    //}
-    //m_oSvc = oSvc.data();
-//
+    //用于和离线结果进行对比，将转换后的数据存下来
+    SniperPtr<RootOutputSvc> oSvc(*m_par, "ValiOutputSvc");
+    if ( oSvc.invalid() ) {
+        LogFatal << "cann't find OutputSvc for "
+                 << m_par->scope() << m_par->objName() << std::endl;
+        throw SniperException("OutputSvc is invalid");
+    }
+    m_oSvc = oSvc.data();
+
     SniperDataPtr<LOECNavBuf> buf(getParent(), "/Event");
     if ( buf.invalid() ) {
         LogFatal << "Cannot find LOECNavBuf" << std::endl;
@@ -185,15 +185,15 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     void* recResult = reinterpret_cast<void*>(*reinterpret_cast<uint64_t*>(recResultInterval.first + 4));
     memcpy(recResult, _cache, sizeInBytes);
 
-    ////为了和离线作比较将数据写出
-    //bool okay = m_oSvc->write(nav);
-    //if (!okay) {
-    //  // If writing is failed, end run immediately
-    //  // FIXME Not an elegant way
-    //  LogFatal << "Failed to write event data!!!" << std::endl;
-    //  assert(okay);
-    //}
-//
+    //为了和离线作比较将数据写出
+    bool okay = m_oSvc->write(nav);
+    if (!okay) {
+      // If writing is failed, end run immediately
+      // FIXME Not an elegant way
+      LogFatal << "Failed to write event data!!!" << std::endl;
+      assert(okay);
+    }
+
     return true;
 }
 

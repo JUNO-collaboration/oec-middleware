@@ -49,10 +49,7 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
 
     //for test:delete later
     assert(evt->marker == 0x12345678);
-    std::cout<<"evt amrker "<<hex<<evt->marker<<std::endl;
-    std::cout<<"The secod is "<<evt->sec<<" nano second is "<<evt->nanoSec<<std::endl;
     
-
     //convert DAQ OECRecEvt to offline OecEvt
     nav->setTimeStamp(TTimeStamp((time_t)(evt->sec), (Int_t)(evt->nanoSec)));
     header->setL1id(evt->l1id);

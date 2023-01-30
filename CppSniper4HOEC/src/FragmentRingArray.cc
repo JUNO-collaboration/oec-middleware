@@ -39,7 +39,7 @@ int FragmentRingArray::insertFrag(std::shared_ptr<std::vector<void*>> evtsPtr, u
     int _locate = (int)(l1id % (uint32_t)m_arrayLen);
     HOECFragment& _frag = m_array[_locate];
     if(_frag.stat != HOECFragment::Status::empty && _frag.stat != HOECFragment::Status::late){
-        LogError<<"failed to insert. the stat is "<<_frag.stat<<std::endl;
+        LogError<<"failed to insert. the stat is "<<_frag.stat<<" locate: "<<_locate<<std::endl;
         snapShot();
         assert(_frag.stat == HOECFragment::Status::empty || _frag.stat == HOECFragment::Status::late);
     }
@@ -67,15 +67,16 @@ HOECFragment& FragmentRingArray::operator[](int locate){
 void FragmentRingArray::snapShot(){
     LogError<<"Something unexpected happens. Here is the snapshot of FragmentRingArray"<<std::endl;
     for(int i = 0; i < m_arrayLen; i++){
-        std::string stat = "unknow";
+        std::string stat = " unknow";
         switch(m_array[i].stat){
             case HOECFragment::Status::empty: stat = " empty";
             case HOECFragment::Status::ready: stat = " ready";
             case HOECFragment::Status::late: stat = " late";
             case HOECFragment::Status::inWorker: stat = " inWorker";
+            case HOECFragment::Status::returned: stat = " returned";
         }
 
-        LogError<<"Locate: "<<i<<" TFid: "<<m_array[i].l1id<<stat<<" "<<m_array[i].timeSec<<m_array[i].nanoSec<<std::endl;
+        LogError<<std::dec<<"Locate: "<<i<<" TFid: "<<m_array[i].l1id<<" Status code "<<m_array[i].stat<<stat<<" "<<m_array[i].timeSec<<" "<<m_array[i].nanoSec<<std::endl;
     }
 }
 
