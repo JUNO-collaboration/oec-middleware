@@ -20,9 +20,8 @@ Modify "setenv.sh", make sure `$JUNOTOP` and `$MyWorkArea` are set to proper dir
 
 ```bash
 source setenv.sh
-cd OECTestAlg/cmt
-cmt br cmt config
-cmt br cmt make
+cmake .. -DBUILD_ONLINE=ON
+make
 ```
 
 # Plans

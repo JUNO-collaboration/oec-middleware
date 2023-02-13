@@ -9,6 +9,11 @@
 #include "oec_com/QueueForOEC.h"
 #include "FragmentRingArray.h"
 #include <chrono>
+#include "oec_com/OEC_define.h"
+
+//**************异常处理思路***************
+//正常情况：为了保证数据流能够正常通过HOEC，每次移动pointer，和向环形buffer塞入的过程中都需要预先检查格子的状态
+//如果格子状态不符合预期不符合预期，就称之为异常
 
 class CppSniper4HOEC;
 class RecEvt;
@@ -44,8 +49,8 @@ private://成员变量的初始化顺序，依照此顺序
     void processFragment();
     void cleanTimeout();
     void return2DAQ();
+    bool isAcceptable(oec::OECRecEvt* evt);
     virtual void oec_process(void* event, void* results);
-
 
     //worker线程
     QueueForOEC<HOECFragment*> m_iWorkerQ;//控制线程传递数据给worker

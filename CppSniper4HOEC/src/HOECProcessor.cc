@@ -110,7 +110,7 @@ void HOECProcessor::mainThreadFunc(){
         _firstEvt = ((oec::OECRecEvt*)(*evtsPtr->begin()));//此时间片内第一个事例的信息
         
         //判断TF是否在可接受的范围内
-        if(_firstEvt->sec < (*m_timeoutPointer).timeSec || (_firstEvt->sec == (*m_timeoutPointer).timeSec && _firstEvt->nanoSec < (*m_timeoutPointer).nanoSec)){
+        if(!isAcceptable(_firstEvt)){
             LogInfo<<"The time of last cleaned: "<<(*m_timeoutPointer).timeSec<<" "<<(*m_timeoutPointer).nanoSec<<std::endl;
             LogInfo<<"The time of newly accepted evt: "<<_firstEvt->sec<<" "<<_firstEvt->nanoSec<<std::endl;
             LogError<<"Error: the received TF is not in the processing scope, Too old"<<std::endl;
@@ -195,7 +195,7 @@ void HOECProcessor::cleanTimeout(){
                 LogFatal<<"Warning: clean one time out. The state is late. TFid: "<<fragment.l1id<<std::endl;
                 fragment.stat = HOECFragment::Status::returned;
             }
-            else{
+            else{//To Do: 清理指针遇到了 inworker
                 LogError<<"The timeoutPointer is on an unexpected status "<<fragment.stat<<std::endl;
                 m_fragmentPool.snapShot();
                 assert(false);
@@ -216,12 +216,31 @@ void HOECProcessor::return2DAQ(){
     while(true){
         if(!(m_oWorkerQ.TryGetElement(retFrag)))    break;
 
-        assert(retFrag->stat == HOECFragment::Status::inWorker);
+        assert(retFrag->stat == HOECFragment::Status::inWorker || retFrag->stat == HOECFragment::Status::returned);
         m_queOut.PutElement(*(retFrag->evtsPtr));//结果返回给DAQ
         retFrag->evtsPtr = nullptr;
-        retFrag->stat = HOECFragment::Status::returned;
+        
+        if(retFrag->stat == HOECFragment::Status::inWorker)
+            retFrag->stat = HOECFragment::Status::returned;
+        else if(retFrag->stat == HOECFragment::Status::returned)
+            retFrag->stat = HOECFragment::Status::empty;
     }
     return;
+}
+
+bool HOECProcessor::isAcceptable(oec::OECRecEvt* evt){
+    int length = m_fragmentPool.getLength();
+    int locate = (int)(evt->l1id% (uint32_t)length);
+    int resistLength = length/4;//落后于timeoutPointer resisLength的TF就不被接受了
+    //TODO: 时间判断和相对位置判断一起决定是否可接受
+    if(m_timeoutPointer.locate - resistLength >= 0){
+        if(locate <= m_timeoutPointer.locate && locate >= m_timeoutPointer.locate - resistLength)   return false;
+    }
+    else{
+        int _bottom = m_fragmentPool.getLength() - (resistLength - m_timeoutPointer.locate);
+        if(locate <= m_timeoutPointer.locate || locate >= _bottom)   return false;
+    }
+    return true;
 }
 
 void HOECProcessor::workerThreadFunc(){

@@ -69,11 +69,11 @@ void FragmentRingArray::snapShot(){
     for(int i = 0; i < m_arrayLen; i++){
         std::string stat = " unknow";
         switch(m_array[i].stat){
-            case HOECFragment::Status::empty: stat = " empty";
-            case HOECFragment::Status::ready: stat = " ready";
-            case HOECFragment::Status::late: stat = " late";
-            case HOECFragment::Status::inWorker: stat = " inWorker";
-            case HOECFragment::Status::returned: stat = " returned";
+            case HOECFragment::Status::empty: stat = " empty"; break;
+            case HOECFragment::Status::ready: stat = " ready"; break;
+            case HOECFragment::Status::late: stat = " late"; break;
+            case HOECFragment::Status::inWorker: stat = " inWorker"; break;
+            case HOECFragment::Status::returned: stat = " returned"; break;
         }
 
         LogError<<std::dec<<"Locate: "<<i<<" TFid: "<<m_array[i].l1id<<" Status code "<<m_array[i].stat<<stat<<" "<<m_array[i].timeSec<<" "<<m_array[i].nanoSec<<std::endl;
