@@ -3,6 +3,7 @@
 
 #include "SniperKernel/SvcBase.h"
 #include "oec_com/OEC_define.h"
+#include "OecEvtConverter/OecEvtConverter.h"
 
 class HOECNavBuf;
 
@@ -22,7 +23,7 @@ class HOECInputSvc : public SvcBase
         uint32_t m_l1id;
 
     private :
-
+        OecEvtConverter* m_converter;
         HOECNavBuf* m_buf;
 };
 

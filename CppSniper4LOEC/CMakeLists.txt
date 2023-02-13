@@ -11,6 +11,7 @@ PKG(CppSniper4LOEC
         junosw::CondDB
         junosw::BufferMemMgr
         MiddlewareConfigSvc
+        OecEvtConverter
         #junosw::OECTagSvc
         #junosw::EvtConfig
         )

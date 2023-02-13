@@ -1,0 +1,17 @@
+{
+    "sniper": {
+      "LoadDlls": ["libOECTestAlg.so", "libCppSniper4HOEC.so"],
+      "LogLevel": 0
+    },
+    "identifier": "Task/OECTask",
+    "properties": {
+      "EvtMax": 1
+    },
+    "services": [],
+    "algorithms": [
+      {
+        "identifier": "OecEvtConverterTest/OecEvtConverterTest"
+      }
+    ]
+}
+  

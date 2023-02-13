@@ -3,7 +3,7 @@
 
 #include "SniperKernel/SvcBase.h"
 #include <juno_pack/Event.h>
-
+#include "OecEvtConverter/OecEvtConverter.h"
 
 class LOECNavBuf;
 class RootOutputSvc;
@@ -27,6 +27,7 @@ class LOECOutputSvc : public SvcBase
         LOECNavBuf* m_buf;
         void*       m_cache;
         int         m_nInPack;
+        OecEvtConverter* m_converter;
     
         std::string m_type;
 

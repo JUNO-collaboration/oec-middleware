@@ -4,6 +4,7 @@ PKG(CppSniper4HOEC
         #Boost::python38
         junosw::EvtNavigator
         junosw::OecEvent
+        OecEvtConverter
         )
 
 

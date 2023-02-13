@@ -1,0 +1,4 @@
+PKG(MiddlewareConfigSvc
+    DEPENDS
+
+        )

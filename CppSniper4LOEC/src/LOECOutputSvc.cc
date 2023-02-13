@@ -19,6 +19,7 @@ LOECOutputSvc::LOECOutputSvc(const std::string& name)
 {
     declProp("OutputType", m_type);
     m_cache = new char[1024*1024*4]; //FIXME: should not use a fixed size
+    m_converter = new OecEvtConverter((uint8_t*)m_cache);
 }
 
 LOECOutputSvc::~LOECOutputSvc()
@@ -28,14 +29,14 @@ LOECOutputSvc::~LOECOutputSvc()
 
 bool LOECOutputSvc::initialize()
 {
-    //用于和离线结果进行对比，将转换后的数据存下来
-    SniperPtr<RootOutputSvc> oSvc(*m_par, "ValiOutputSvc");
-    if ( oSvc.invalid() ) {
-        LogFatal << "cann't find OutputSvc for "
-                 << m_par->scope() << m_par->objName() << std::endl;
-        throw SniperException("OutputSvc is invalid");
-    }
-    m_oSvc = oSvc.data();
+    ////用于和离线结果进行对比，将转换后的数据存下来
+    //SniperPtr<RootOutputSvc> oSvc(*m_par, "ValiOutputSvc");
+    //if ( oSvc.invalid() ) {
+    //    LogFatal << "cann't find OutputSvc for "
+    //             << m_par->scope() << m_par->objName() << std::endl;
+    //    throw SniperException("OutputSvc is invalid");
+    //}
+    //m_oSvc = oSvc.data();
 
     SniperDataPtr<LOECNavBuf> buf(getParent(), "/Event");
     if ( buf.invalid() ) {
@@ -135,43 +136,7 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
 {
     //std::cout << "Try to get Navigator" << std::endl;
     JM::EvtNavigator* nav = m_buf->curEvt();
-    //std::cout << "Try to get Header" << std::endl;
-    auto oecHeader = dynamic_cast<JM::OecHeader*>(nav->getHeader("/Event/Oec"));
-    if ( ! oecHeader ) {
-        LogFatal << "Failed to get OecHeader" << std::endl;
-        return false;
-    }
-    auto oecEvent = (JM::OecEvt*)oecHeader->event("JM::OecEvt");
-
-    //set result to DAQ Buffer
-    static const int headerSize = 0;//重建的顶点结果不要header
-    int size = headerSize;
-    uint32_t* _cache = (uint32_t*)m_cache;
-    oec::OECRecEvt* _evt = (oec::OECRecEvt*)(_cache+size);
-    _evt->marker = 0x12345678;
-    _evt->l1id = onlineEvt.l1id();
-    _evt->evtId = nav->EventID();
-    const auto& time = nav->TimeStamp();
-    _evt->sec = time.GetSec();
-    _evt->nanoSec = time.GetNanoSec();
-    _evt->nCluster = 0; //not used yet
-    _evt->tag = oecEvent->getTag();
-    _evt->energy = oecEvent->getEnergy();
-    _evt->x = oecEvent->getVertexX();
-    _evt->y = oecEvent->getVertexY();
-    _evt->z = oecEvent->getVertexZ();
-    //FixME: muon的顶点可能又多个，新的OECEvt中存放的是一个vector
-    //_evt->muinx = oecEvent->getMuInX();
-    //_evt->muiny = oecEvent->getMuInY();
-    //_evt->muinz = oecEvent->getMuInZ();
-    //_evt->muid  = oecEvent->getMuID();
-
-    int sizeInBytes = size*4 +sizeof(oec::OECRecEvt);//把 header拿到结构体部
-    //_cache[0] = 0x12345678;  //marker
-    //_cache[1] = headerSize*4;  //HeaderSize
-    //_cache[2] = 0;  //qt vertex size in bytes
-    //_cache[3] = sizeof(oec::OECRecEvt);  //waveform vertex size in bytes
-    //_cache[4] = m_buf->l1id;  //l1id
+    int sizeInBytes = m_converter->writeOecEvt(nav, onlineEvt.l1id());
 
     std::pair<uint8_t*, uint8_t*> recResultInterval = onlineEvt.indexOf(junoread::Event::EventIndex::REC_RESULT);
     
@@ -183,16 +148,16 @@ bool LOECOutputSvc::putVertex(junoread::Event& onlineEvt)
     assert(sizeInBytes < 6000000);//daq提供的内存上限是6M
 
     void* recResult = reinterpret_cast<void*>(*reinterpret_cast<uint64_t*>(recResultInterval.first + 4));
-    memcpy(recResult, _cache, sizeInBytes);
+    memcpy(recResult, m_cache, sizeInBytes);
 
-    //为了和离线作比较将数据写出
-    bool okay = m_oSvc->write(nav);
-    if (!okay) {
-      // If writing is failed, end run immediately
-      // FIXME Not an elegant way
-      LogFatal << "Failed to write event data!!!" << std::endl;
-      assert(okay);
-    }
+    ////为了和离线作比较将数据写出
+    //bool okay = m_oSvc->write(nav);
+    //if (!okay) {
+    //  // If writing is failed, end run immediately
+    //  // FIXME Not an elegant way
+    //  LogFatal << "Failed to write event data!!!" << std::endl;
+    //  assert(okay);
+    //}
 
     return true;
 }
