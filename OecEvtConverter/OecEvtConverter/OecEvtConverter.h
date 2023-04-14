@@ -10,7 +10,8 @@ public:
     const uint32_t Array_header = 0x12345670;
 
     OecEvtConverter(uint8_t* startPtr);
-    void setStartPtr(uint8_t* ptr){m_startPtr = ptr;}
+    void setStartPtr(uint8_t* ptr){
+        m_startPtr = ptr;}
     uint32_t writeOecEvt(JM::EvtNavigator* nav, uint32_t l1id);//返回值是写入buffer后的长度
     JM::EvtNavigator* getOecEvt();
 
@@ -42,7 +43,7 @@ uint32_t OecEvtConverter::writeArray(uint8_t* ptr, const std::vector<T>& arr){
         nib += sizeof(T);        
     }
     
-    assert((nib - ptr) == sizeof(uint32_t)*2 + sizeof(T)*arr.size());
+    assert((size_t)(nib - ptr) == sizeof(uint32_t)*2 + sizeof(T)*arr.size());
 
     return static_cast<uint32_t>(nib - ptr);
 }

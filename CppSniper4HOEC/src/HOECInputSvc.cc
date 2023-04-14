@@ -40,9 +40,8 @@ bool HOECInputSvc::get(oec::OECRecEvt* evt)
 {
     //for test:delete later
     assert(evt->marker == 0x12345678);
-    m_converter->setStartPtr((uint8_t*)evt);
-    auto nav = m_converter->getOecEvt();
-
+    m_converter.setStartPtr((uint8_t*)evt);
+    auto nav = m_converter.getOecEvt();
     m_buf->set(nav);
 
     return true;

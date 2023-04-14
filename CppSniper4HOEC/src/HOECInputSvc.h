@@ -23,7 +23,7 @@ class HOECInputSvc : public SvcBase
         uint32_t m_l1id;
 
     private :
-        OecEvtConverter* m_converter;
+        OecEvtConverter m_converter;
         HOECNavBuf* m_buf;
 };
 
